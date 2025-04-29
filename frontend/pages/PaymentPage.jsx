@@ -1,3 +1,4 @@
+"use client"
 import { useEffect } from "react";
 import CheckOutSteps from "@/components/CheckOut/CheckOutSteps";
 import Footer from "@/components/Footer";

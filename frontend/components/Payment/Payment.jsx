@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { server } from "../../lib/server";
-import { clearCartAction } from "../redux/actions/cart";
+import { clearCartAction } from "../../redux/actions/cart";
 
 function Payment() {
   const { user } = useSelector((state) => state.user);

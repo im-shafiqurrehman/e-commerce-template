@@ -2,25 +2,39 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Link from "next/link"; // Replaced react-router-dom's Link with next/link
-import { useRouter } from "next/navigation"; // Replaced react-router-dom's useNavigate with next/navigation's useRouter
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { server } from "@/lib/server";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux"; // Added useDispatch
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { loadUserSuccess } from "@/redux/reducers/user"; // Added loadUserSuccess (adjust based on your Redux setup)
 
 function Login() {
+  const dispatch = useDispatch(); // Added for dispatching Redux actions
   const { isAuthenticated } = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const router = useRouter(); // Replaced useNavigate with useRouter
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/"); // Replaced navigate("/") with router.push("/")
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    const savedPassword = localStorage.getItem("rememberedPassword");
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
     }
-  }, [isAuthenticated, router]);
+  }, []);
+
+  // Redirect if authenticated
+  if (isAuthenticated) {
+    router.push("/");
+    return null; // Prevent rendering the form
+  }
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -28,16 +42,27 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       const res = await axios.post(
         `${server}/user/login`,
-        { email, password },
+        { email, password, rememberMe },
         { withCredentials: true },
       );
       if (res.data.success) {
-        window.location.reload();
+        // Update Redux state with user data
+        dispatch(loadUserSuccess(res.data.user)); // Adjust based on your Redux action
+        // Handle "Remember Me" storage
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", email);
+          localStorage.setItem("rememberedPassword", password);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+          localStorage.removeItem("rememberedPassword");
+        }
         toast.success("User successfully logged in");
-        router.push("/"); // Replaced navigate("/") with router.push("/")
+        router.push("/"); // Navigate without reload
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -46,6 +71,8 @@ function Login() {
         toast.error("An error occurred. Please try again.");
       }
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,6 +111,7 @@ function Login() {
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     placeholder="name@company.com"
                     required
+                    disabled={loading}
                   />
                 </div>
                 <div>
@@ -102,12 +130,14 @@ function Login() {
                       onChange={(e) => setPassword(e.target.value)}
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                       required
+                      disabled={loading}
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5">
                       <button
                         type="button"
                         onClick={togglePasswordVisibility}
                         className="focus:outline-none"
+                        disabled={loading}
                       >
                         {passwordVisible ? (
                           <FaEyeSlash size={18} />
@@ -126,6 +156,9 @@ function Login() {
                         aria-describedby="remember"
                         type="checkbox"
                         className="focus:ring-3 h-4 w-4 rounded border border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                        disabled={loading}
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
                       />
                     </div>
                     <div className="ml-3 text-sm">
@@ -137,23 +170,44 @@ function Login() {
                       </label>
                     </div>
                   </div>
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-                  >
-                    Forgot password?
-                  </a>
                 </div>
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center"
+                  disabled={loading}
                 >
-                  Sign in
+                  {loading ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 mr-2 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                        ></path>
+                      </svg>
+                      Signing in...
+                    </>
+                  ) : (
+                    "Sign in"
+                  )}
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don’t have an account yet?{" "}
                   <Link
-                    href="/register" // Replaced to="/register" with href="/register"
+                    href="/register"
                     className="font-medium text-blue-600 hover:underline dark:text-blue-500"
                   >
                     Sign up

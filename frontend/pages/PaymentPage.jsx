@@ -7,7 +7,7 @@ import Payment from "@/components/Payment/Payment";
 
 function PaymentPage() {
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" }); // Updated to use smooth scrolling for better UX
+    window.scrollTo({ top: 0, behavior: "smooth" }); 
   }, []);
 
   return (

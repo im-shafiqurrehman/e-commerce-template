@@ -1,10 +1,10 @@
-"use client"; // Added because of useState and useEffect
+"use client"; 
 
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { server } from "@/lib/server";
 
-function SellerActivation({ token }) { // Replaced useParams with token prop
+function SellerActivation({ token }) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ function SellerActivation({ token }) { // Replaced useParams with token prop
       const activationEmail = async () => {
         try {
           const res = await axios.post(`${server}/shop/seller/activation`, {
-            activation_token: token, // Updated to use token prop
+            activation_token: token, 
           });
           console.log(res.data.message);
         } catch (error) {
@@ -22,7 +22,7 @@ function SellerActivation({ token }) { // Replaced useParams with token prop
       };
       activationEmail();
     }
-  }, [token]); // Updated dependency array to use token prop
+  }, [token]); 
 
   return (
     <div className="w-full h-screen flex items-center justify-center p-4">

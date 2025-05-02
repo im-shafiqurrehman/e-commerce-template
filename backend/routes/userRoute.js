@@ -30,7 +30,7 @@ userRouter.post("/create-user", upload.single("file"), createUser);
 userRouter.post("/activation", activateUser);
 userRouter.post("/login", loginUser);
 userRouter.get("/getuser", isAuthenticated, getUser);
-userRouter.get("/logout", isAuthenticated, Logout);
+userRouter.get("/logout",Logout);
 userRouter.put("/update-user-info", isAuthenticated, updateUserInfo);
 userRouter.put(
   "/update-avatar",

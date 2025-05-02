@@ -35,15 +35,15 @@ function ShopInfo({ isOwner }) {
         setIsLoading(false);
       });
   }, [dispatch, id]);
-
+  
   const handleLogout = async () => {
     try {
-      const res = await axios.get(`${server}/shop/logout`, {
+      const res = await axios.get(`${server}/user/logout`, {
         withCredentials: true,
       });
       toast.success(res.data.message);
-      router.push("/");
-      // Removed window.location.reload()
+      router.push("/login");
+      window.location.reload(true); // Hard refresh
     } catch (error) {
       console.log(error.message);
       toast.error(error.response?.data?.message || "Logout failed");

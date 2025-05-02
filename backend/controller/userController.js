@@ -34,7 +34,7 @@ export const createUser = async (req, res, next) => {
 
     const activationToken = createActivationToken(user);
 
-    const activationUrl = `http://localhost:5173/activation/${activationToken}`;
+    const activationUrl = `http://localhost:3000/activation/${activationToken}`;
 
     try {
       await sendMail({
@@ -154,7 +154,7 @@ export const updateUserInfo = catchAsyncErrors(async (req, res, next) => {
   try {
     const { email, name, password, phoneNumber } = req.body;
 
-    console.log("Received phoneNumber:", phoneNumber);
+    // console.log("Received phoneNumber:", phoneNumber);
 
     // Ensure the user exists
     const user = await userModel.findOne({ email }).select("+password");
@@ -173,7 +173,7 @@ export const updateUserInfo = catchAsyncErrors(async (req, res, next) => {
     user.email = email;
     user.phoneNumber = phoneNumber;
 
-    console.log("Updating user with phoneNumber:", user.phoneNumber);
+    // console.log("Updating user with phoneNumber:", user.phoneNumber);
 
     await user.save();
 

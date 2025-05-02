@@ -1,8 +1,8 @@
-"use client"; // Added because of useEffect and useRouter
+"use client"; 
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation"; // Added useRouter for redirecting in Next.js
+import { useRouter } from "next/navigation";
 import Loader from "@/components/Loader";
 
 const SellerProtectedRoute = ({ children }) => {
@@ -11,7 +11,7 @@ const SellerProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     if (!isLoading && !isSeller) {
-      router.push("/shop-login"); // Replaced Navigate with router.push
+      router.push("/shop-login"); 
     }
   }, [isLoading, isSeller, router]);
 
@@ -20,7 +20,7 @@ const SellerProtectedRoute = ({ children }) => {
   }
 
   if (!isSeller) {
-    return null; // Return null while redirecting
+    return null;
   }
 
   return children;

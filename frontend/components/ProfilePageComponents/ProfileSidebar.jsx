@@ -24,7 +24,7 @@ function ProfileSidebar({ active, setActive }) {
       });
       toast.success(res.data.message);
       router.push("/login");
-      // Removed window.location.reload() to avoid full page refresh
+      window.location.reload(true); // Hard refresh
     } catch (error) {
       console.log(error.message);
       toast.error(error.response?.data?.message || "Logout failed");

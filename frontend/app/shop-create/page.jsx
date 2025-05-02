@@ -1,11 +1,11 @@
 
-import PaymentPage from "@/pages/PaymentPage";
 import ProtectedRoute from "@/pages/ProtectedRoute";
+import ShopCreate from "../../pages/ShopPages/ShopCreate";
 
 export default function Payment() {
   return (
     <ProtectedRoute>
-      <PaymentPage />
+      <ShopCreate />
     </ProtectedRoute>
   );
 }

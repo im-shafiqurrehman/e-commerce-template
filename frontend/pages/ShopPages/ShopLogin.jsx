@@ -1,28 +1,47 @@
-"use client"; // Added because of useState, useEffect, and useRouter
-
+"use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Link from "next/link"; // Replaced react-router-dom's Link with next/link
-import { useRouter } from "next/navigation"; // Replaced react-router-dom's useNavigate with next/navigation's useRouter
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { server } from "@/lib/server";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { loadSellerSuccess } from "@/redux/reducers/seller"; // Added for Redux state update
+import { redirect } from "next/navigation";
 
 function ShopLogin() {
+  const dispatch = useDispatch(); // Added for Redux dispatch
   const { isSeller, seller } = useSelector((state) => state.seller);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const router = useRouter(); // Replaced useNavigate with useRouter
+  const [rememberMe, setRememberMe] = useState(false); // Added for Remember Me
+  const [loading, setLoading] = useState(false); // Added for loading effect
+  const { user } = useSelector((state) => state.user);
+  const router = useRouter();
 
   useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedShopEmail");
+    const savedPassword = localStorage.getItem("rememberedShopPassword");
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
     if (isSeller) {
-      router.push("/dashboard"); // Replaced navigate("/dashboard") with router.push("/dashboard")
+      router.push("/dashboard");
+    }
+    if (user?.role !== "admin") {
+      router.replace("/");
     }
   }, [isSeller, seller, router]);
+
+  // Prevent rendering if authenticated
+  if (isSeller) {
+    return null; // Added to prevent flash
+  }
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -30,16 +49,24 @@ function ShopLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading state
     try {
       const res = await axios.post(
         `${server}/shop/login-shop`,
-        { email, password },
+        { email, password, rememberMe }, // Added rememberMe to payload
         { withCredentials: true }
       );
       if (res.data.success) {
+        dispatch(loadSellerSuccess(res.data.seller)); // Added to update Redux state
+        if (rememberMe) {
+          localStorage.setItem("rememberedShopEmail", email);
+          localStorage.setItem("rememberedShopPassword", password);
+        } else {
+          localStorage.removeItem("rememberedShopEmail");
+          localStorage.removeItem("rememberedShopPassword");
+        }
         toast.success("User successfully logged in");
         router.push("/dashboard"); // Navigate to dashboard
-        router.refresh(); // Refresh to ensure the updated auth state is reflected
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -48,6 +75,8 @@ function ShopLogin() {
         toast.error("An error occurred. Please try again.");
       }
       console.log(error);
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -68,7 +97,8 @@ function ShopLogin() {
               <form
                 onSubmit={handleSubmit}
                 className="space-y-4 md:space-y-6"
-                action="#"
+                action
+="#"
               >
                 <div>
                   <label
@@ -86,6 +116,7 @@ function ShopLogin() {
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     placeholder="name@company.com"
                     required
+                    disabled={loading} // Added for loading effect
                   />
                 </div>
                 <div>
@@ -104,12 +135,14 @@ function ShopLogin() {
                       onChange={(e) => setPassword(e.target.value)}
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                       required
+                      disabled={loading} // Added for loading effect
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5">
                       <button
                         type="button"
                         onClick={togglePasswordVisibility}
                         className="focus:outline-none"
+                        disabled={loading} // Added for loading effect
                       >
                         {passwordVisible ? (
                           <FaEyeSlash size={18} />
@@ -128,6 +161,9 @@ function ShopLogin() {
                         aria-describedby="remember"
                         type="checkbox"
                         className="focus:ring-3 h-4 w-4 rounded border border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                        checked={rememberMe} // Bind checkbox state
+                        onChange={(e) => setRememberMe(e.target.checked)} // Update state
+                        disabled={loading} // Added for loading effect
                       />
                     </div>
                     <div className="ml-3 text-sm">
@@ -139,23 +175,44 @@ function ShopLogin() {
                       </label>
                     </div>
                   </div>
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-                  >
-                    Forgot password?
-                  </a>
                 </div>
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center" // Added flex for spinner alignment
+                  disabled={loading} // Added for loading effect
                 >
-                  Sign in
+                  {loading ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 mr-2 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                        ></path>
+                      </svg>
+                      Signing in...
+                    </>
+                  ) : (
+                    "Sign in"
+                  )}
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don’t have an account yet?{" "}
                   <Link
-                    href="/shop-create" // Replaced to="/shop-create" with href="/shop-create"
+                    href="/shop-create"
                     className="font-medium text-blue-600 hover:underline dark:text-blue-500"
                   >
                     Sign up

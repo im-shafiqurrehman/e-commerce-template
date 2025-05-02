@@ -21,7 +21,12 @@ import { useSelector } from "react-redux";
 import { backend_url } from "../lib/server";
 import CartPopUp from "./CartPopUp";
 import WhishListPopUp from "./WhishListPopUp";
-import logo from "../public/assets/logo.png"
+import logo from "../public/assets/logo.png";
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
 
 function Header() {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -128,14 +133,34 @@ function Header() {
             )}
           </div>
           {/* seller button */}
+
+
+
+
+
           <div className="my-3 flex items-center gap-2 rounded-md bg-indigo-800 px-5 py-3 text-white">
-            <Link href={isSeller ? "/dashboard" : "/shop-create"}>
-              <div className="flex items-center justify-center text-[#fff]">
-                <h1>{isSeller ? "DashBoard" : "Become Seller"}</h1>
-                {!isSeller && <IoIosArrowForward className="ml-1" />}
-              </div>
+            <Link
+              href={user?.role === "admin" ? "/shop-login" : "#"}
+              onClick={(e) => {
+                if (!isAuthenticated) {
+                  e.preventDefault();
+                  toast.error("Please login first");
+                  router.push("/login");
+                } else if (user?.role !== "admin") {
+                  e.preventDefault();
+                  toast.error("Only admin users can access seller features");
+                }
+              }}
+              className={`flex items-center justify-center ${user?.role === "admin" ? "text-[#fff]" : "text-gray-400 cursor-not-allowed"}`}
+            >
+              <h1>Admin Panel</h1>
+              {user?.role !== "admin" && <IoIosArrowForward className="ml-1" />}
             </Link>
           </div>
+
+
+
+
         </div>
       </div>
       {/* mobile navbar */}
@@ -145,7 +170,7 @@ function Header() {
           <div>
             <Link href="/">
               <Image
-                 src={logo}
+                src={logo}
                 alt="Logo"
                 width={120}
                 height={40}
@@ -266,14 +291,35 @@ function Header() {
                 </li>
               ))}
             </ul>
+
+
             <div className="flex w-full cursor-pointer items-center justify-center">
-              <Link href={isSeller ? "/dashboard" : "/shop-create"}>
-                <div className="my-3 flex items-center gap-2 rounded-md bg-indigo-800 px-9 py-3 text-white">
-                  <h1>{isSeller ? "Shop DashBoard" : "Become Seller"}</h1>
-                  {!isSeller && <IoIosArrowForward className="ml-1" />}
-                </div>
+              <Link
+                href={user?.role === "admin" ? "/shop-login" : "#"}
+                onClick={(e) => {
+                  if (!isAuthenticated) {
+                    e.preventDefault();
+                    toast.error("Please login first");
+                    router.push("/login");
+                  } else if (user?.role !== "admin") {
+                    e.preventDefault();
+                    toast.error("Only admin users can access seller features");
+                  }
+                }}
+                className={`my-3 flex items-center gap-2 rounded-md px-9 py-3 ${user?.role === "admin" ? "bg-indigo-800 text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+              >
+                <h1>Admin Panel</h1>
+                {user?.role !== "admin" && <IoIosArrowForward className="ml-1" />}
               </Link>
             </div>
+
+
+
+
+
+
+
+
           </div>
         </div>
       )}

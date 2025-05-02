@@ -1,15 +1,16 @@
-"use client"; // Added because of useState, useEffect, and useRouter
+"use client";
 
 import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { RxAvatar } from "react-icons/rx";
 import axios from "axios";
-import Link from "next/link"; // Replaced react-router-dom's Link with next/link
-import { useRouter } from "next/navigation"; // Replaced react-router-dom's useNavigate with next/navigation's useRouter
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { server } from "@/lib/server";
 import { toast } from "react-toastify";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useSelector } from "react-redux";
+import { redirect } from "next/navigation";
 
 function ShopCreate() {
   const { isSeller } = useSelector((state) => state.seller);
@@ -20,13 +21,19 @@ function ShopCreate() {
   const [address, setAddress] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [avatar, setAvatar] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { user } = useSelector((state) => state.user);
 
-  const router = useRouter(); // Replaced useNavigate with useRouter
+  const router = useRouter();
 
   useEffect(() => {
     if (isSeller) {
-      router.push("/dashboard"); // Replaced navigate("/dashboard") with router.push("/dashboard")
+      router.push("/dashboard");
+    }
+    if (user?.role !== "admin") {
+      router.replace("/");
     }
   }, [isSeller, router]);
 
@@ -34,6 +41,7 @@ function ShopCreate() {
     const file = e.target.files[0];
     if (file) {
       setAvatar(file);
+      setAvatarPreview(URL.createObjectURL(file));
     }
   };
 
@@ -43,6 +51,7 @@ function ShopCreate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const formData = new FormData();
     formData.append("name", name);
@@ -51,7 +60,9 @@ function ShopCreate() {
     formData.append("zipCode", zipCode);
     formData.append("phoneNumber", phoneNumber);
     formData.append("address", address);
-    formData.append("file", avatar);
+    if (avatar) {
+      formData.append("file", avatar);
+    }
 
     try {
       const config = {
@@ -71,15 +82,19 @@ function ShopCreate() {
         setName("");
         setEmail("");
         setPassword("");
-        setAvatar(null); // Updated to set to null instead of undefined
+        setAvatar(null);
+        setAvatarPreview(null);
         setAddress("");
         setPhoneNumber("");
         setZipCode("");
+        router.push("/shop-login"); // Redirect to shop-login on success
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,6 +133,7 @@ function ShopCreate() {
                       onChange={(e) => setName(e.target.value)}
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div>
@@ -135,6 +151,7 @@ function ShopCreate() {
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -156,6 +173,7 @@ function ShopCreate() {
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                       placeholder="name@company.com"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div>
@@ -173,6 +191,7 @@ function ShopCreate() {
                       onChange={(e) => setAddress(e.target.value)}
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -193,6 +212,7 @@ function ShopCreate() {
                       onChange={(e) => setZipCode(e.target.value)}
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div>
@@ -211,12 +231,14 @@ function ShopCreate() {
                         onChange={(e) => setPassword(e.target.value)}
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         required
+                        disabled={loading}
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5">
                         <button
                           type="button"
                           onClick={togglePasswordVisibility}
                           className="focus:outline-none"
+                          disabled={loading}
                         >
                           {passwordVisible ? (
                             <FaEyeSlash size={18} />
@@ -232,16 +254,12 @@ function ShopCreate() {
                 <div>
                   <div className="mt-2 flex items-center">
                     <span className="inline-block h-8 w-8 overflow-hidden rounded-full">
-                      {avatar ? (
-                        typeof avatar === "string" ? (
-                          <img
-                            src={avatar}
-                            alt="avatar"
-                            className="h-full w-full rounded-full object-cover"
-                          />
-                        ) : (
-                          <RxAvatar className="h-8 w-8" />
-                        )
+                      {avatarPreview ? (
+                        <img
+                          src={avatarPreview}
+                          alt="avatar"
+                          className="h-full w-full rounded-full object-cover"
+                        />
                       ) : (
                         <RxAvatar className="h-8 w-8" />
                       )}
@@ -258,6 +276,7 @@ function ShopCreate() {
                         accept=".jpg,.jpeg,.png"
                         onChange={handleFileInputChange}
                         className="sr-only"
+                        disabled={loading}
                       />
                     </label>
                   </div>
@@ -265,14 +284,41 @@ function ShopCreate() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center"
+                  disabled={loading}
                 >
-                  Sign up
+                  {loading ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 mr-2 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                        ></path>
+                      </svg>
+                      Creating Shop...
+                    </>
+                  ) : (
+                    "Sign up"
+                  )}
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Already have an account?{" "}
                   <Link
-                    href="/shop-login" // Replaced to="/shop-login" with href="/shop-login"
+                    href="/shop-login"
                     className="font-medium text-blue-600 hover:underline dark:text-blue-500"
                   >
                     Sign in

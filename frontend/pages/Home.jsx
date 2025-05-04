@@ -18,7 +18,7 @@ function Home() {
       <Events />
       <FeaturedProduct />
       <Sponsored />
-      <NewsLetter />
+      {/* <NewsLetter /> */}
       <Footer />
     </div>
   );

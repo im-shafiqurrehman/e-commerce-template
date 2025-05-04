@@ -21,12 +21,10 @@ import { useSelector } from "react-redux";
 import { backend_url } from "../lib/server";
 import CartPopUp from "./CartPopUp";
 import WhishListPopUp from "./WhishListPopUp";
-import logo from "../public/assets/logo.png";
+import logo from "../public/assets/logo.jpeg";
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-
 
 function Header() {
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -82,9 +80,9 @@ function Header() {
               <Image
                 src={logo}
                 alt="Logo"
-                width={130}
-                height={50}
-                className="w-[200px] lg:w-[130px]"
+                width={100}
+                height={10}
+                className="w-[120px] md:w-[100px]"
               />
             </Link>
           </div>
@@ -164,17 +162,17 @@ function Header() {
         </div>
       </div>
       {/* mobile navbar */}
-      <div className="sticky top-0 z-[250] bg-white pb-2 shadow-md md:hidden">
-        <div className="container mx-auto px-4 flex h-14 w-full items-center justify-between">
+      <div className="sticky top-0 z-[250] bg-gray-100 pb-2 shadow-md md:hidden">
+        <div className="container mx-auto px-4 py-8 flex h-14 w-full items-center justify-between">
           {/* mobile logo */}
           <div>
             <Link href="/">
               <Image
                 src={logo}
                 alt="Logo"
-                width={120}
-                height={40}
-                className="w-[120px]"
+                width={80}
+                height={60}
+                className="w-[60px]"
               />
             </Link>
           </div>
@@ -230,7 +228,7 @@ function Header() {
             placeholder="Search Products..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="block w-full rounded-lg border-2 border-blue-600 bg-gray-50 p-2 text-gray-900 focus:ring-blue-600"
+            className="block w-full rounded-lg border-2 h-9 border-blue-600 bg-gray-100 p-2 text-gray-900 focus:ring-blue-600"
           />
           {searchTerm && searchData && (
             <div className="container mx-auto px-4 absolute top-full z-10 mt-2 w-full bg-white p-4 shadow-lg">

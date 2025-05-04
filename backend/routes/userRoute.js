@@ -11,6 +11,7 @@ import {
   deleteUserAddress,
   updateUserPassword,
   getUserInfo,
+  sendContactForm,
 } from "../controller/userController.js";
 import multer from "multer";
 import { isAuthenticated } from "../middleware/auth.js";
@@ -46,5 +47,7 @@ userRouter.delete(
 );
 userRouter.put("/update-user-password", isAuthenticated, updateUserPassword);
 userRouter.get("/user-info/:id", getUserInfo);
+
+userRouter.post("/send-email", sendContactForm);
 
 export default userRouter;

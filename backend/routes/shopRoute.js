@@ -10,7 +10,7 @@ import {
   updateShopAvatar,
   updateSellerInfo
 } from "../controller/shopController.js";
-import { isAdmin,isSeller } from "../middleware/auth.js";
+import { isAdmin,isSeller,isAuthenticated } from "../middleware/auth.js";
 
 const shopRouter = express.Router();
 
@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-shopRouter.post("/create-shop", isAdmin, upload.single("file"), createShop);
+shopRouter.post("/create-shop", isAuthenticated, isAdmin, upload.single("file"), createShop);
 shopRouter.post("/login-shop", isAdmin ,shopLogin);
 shopRouter.post("/seller/activation", activateSellerShop);
 shopRouter.get("/getSeller", isSeller, loadShop);

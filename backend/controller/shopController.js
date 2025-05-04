@@ -69,16 +69,33 @@ export const activateSellerShop = catchAsyncErrors(async (req, res, next) => {
   try {
     const { activation_token } = req.body;
 
-    const seller = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+    if (!activation_token) {
+      return next(new ErrorHandler("Activation token is required", 400));
+    }
+
+    let seller;
+    try {
+      seller = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+    } catch (jwtError) {
+      console.error("JWT Verification Error:", jwtError.message);
+      return next(new ErrorHandler("Invalid or expired activation token", 400));
+    }
 
     if (!seller) {
       return next(new ErrorHandler("Invalid Token", 400));
     }
 
-    const { name, email, password, avatar, zipCode, address, phoneNumber } =
-      seller;
+    const { name, email, password, avatar, zipCode, address, phoneNumber } = seller;
 
-    await shopModel.create({
+    // Check if seller already exists
+    const existingSeller = await shopModel.findOne({ email });
+    if (existingSeller) {
+      return next(new ErrorHandler("Seller already exists", 400));
+    }
+
+    console.log("Creating Seller:", { name, email, zipCode, phoneNumber, address, avatar }); // Debug
+
+    const newSeller = await shopModel.create({
       name,
       email,
       password,
@@ -88,11 +105,16 @@ export const activateSellerShop = catchAsyncErrors(async (req, res, next) => {
       avatar,
     });
 
-    sendShopToken(seller, 201, res);
+    sendShopToken(newSeller, 201, res);
   } catch (error) {
+    console.error("Activation Error:", error.message);
     return next(new ErrorHandler(error.message, 500));
   }
 });
+
+
+
+
 
 // login shop
 export const shopLogin = catchAsyncErrors(async (req, res, next) => {

@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { FaTiktok } from "react-icons/fa";
 import {
   AiFillFacebook,
   AiFillInstagram,
-  AiFillYoutube,
-  AiOutlineTwitter,
 } from "react-icons/ai";
 import {
   footerProductLinks,
   footercompanyLinks,
   footerSupportLinks,
 } from "../lib/data";
+import footerlogo from "../public/assets/footerlogo.jpg";
 
 function Footer() {
   return (
@@ -20,19 +20,19 @@ function Footer() {
       <div className="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-16 text-center sm:text-left">
         <div className="flex flex-col items-center sm:items-start">
           <Image
-            src="https://shopo.quomodothemes.website/assets/images/logo.svg"
+            src="/assets/footerlogo.jpg"
             alt="Logo"
             className="w-32 mb-4"
-            style={{ filter: "brightness(0) invert(1)" }}
             width={128}
             height={40}
           />
+
           <p className="text-gray-400 mb-4">
             The home and elements needed to create beautiful products.
           </p>
           <div className="flex items-center space-x-4">
             <a
-              href="https://facebook.com"
+              href="https://www.facebook.com/profile.php?id=61574609856374"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-gray-200 cursor-pointer"
@@ -40,15 +40,7 @@ function Footer() {
               <AiFillFacebook size={25} />
             </a>
             <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-200 cursor-pointer"
-            >
-              <AiOutlineTwitter size={25} />
-            </a>
-            <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/halfattire/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-gray-200 cursor-pointer"
@@ -56,12 +48,12 @@ function Footer() {
               <AiFillInstagram size={25} />
             </a>
             <a
-              href="https://youtube.com"
+              href="https://www.tiktok.com/@halfattire?lang=en"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-gray-200 cursor-pointer"
             >
-              <AiFillYoutube size={25} />
+              <FaTiktok size={25} />
             </a>
           </div>
         </div>
@@ -136,11 +128,11 @@ function Footer() {
       <div className="container mx-auto px-4 border-t border-gray-500 py-4 text-center sm:text-left">
         <div className="flex flex-col sm:flex-row justify-between items-center max-w-7xl">
           <span className="text-gray-400 text-sm mb-2 sm:mb-0">
-            © 2024 E-Shop. All rights reserved.
+            © 2025 Half Attire. All rights reserved.
           </span>
-          <span className="text-gray-400 text-sm mb-2 sm:mb-0">
+          {/* <span className="text-gray-400 text-sm mb-2 sm:mb-0">
             Terms · Privacy Policy
-          </span>
+          </span> */}
           <div className="flex justify-center sm:justify-end w-full sm:w-auto">
             <Image
               src="https://hamart-shop.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffooter-payment.a37c49ac.png&w=640&q=75"

@@ -313,3 +313,47 @@ export const getUserInfo = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler(error.message, 500));
   }
 });
+
+
+
+
+
+
+
+
+export const sendContactForm = async (req, res, next) => {
+  try {
+      const { email, subject, template, data, html: directHtml } = req.body;
+
+      // Validate required fields
+      if (!email || !subject || (!template && !directHtml)) {
+          return next(new ErrorHandler("Please provide all required fields", 400));
+      }
+
+      // Render the email content
+      let htmlContent;
+      if (template) {
+          const templatePath = join(__dirname, "..", "mails", template); // Construct the template path
+          htmlContent = await ejs.renderFile(templatePath, data); // Render the template with data
+      } else {
+          htmlContent = directHtml; // Use direct HTML if no template is provided
+      }
+
+      // Send the email using the sendMail service
+      await sendMail({
+          email,
+          subject,
+          html: htmlContent,
+      });
+
+      res.status(200).json({
+          success: true,
+          message: "Email sent successfully",
+      });
+  } catch (error) {
+      console.error("Error in sendContactForm:", error);
+      next(new ErrorHandler(error.message, 500));
+  }
+};
+
+

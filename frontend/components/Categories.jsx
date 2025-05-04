@@ -22,7 +22,7 @@
       <div className="my-12">
         {/* Branding products */}
         <div className="container mx-auto px-4 bg-white shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 rounded-md mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 rounded-md mb-12">
             {brandingData &&
               brandingData.map((item, index) => (
                 <div className="flex items-start" key={index}>

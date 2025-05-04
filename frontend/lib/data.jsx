@@ -592,52 +592,45 @@ export const footerProductLinks = [
     link: "/about",
   },
   {
-    name: "Careers",
-    link: "/carrers",
-  },
-  {
-    name: "Store Locations",
-  },
-  {
-    name: "Our Blog",
+    name: "Contact us",
+    link: "/contact",
   },
   {
     name: "Reviews",
+    link: "/reviews",
   },
 ];
 
 export const footercompanyLinks = [
   {
-    name: "Game & Video",
+    name: "Products",
+    link: "/products",
   },
   {
-    name: "Phone &Tablets",
+    name: "Best Sellings",
+    link: "/best-selling",
   },
   {
-    name: "Computers & Laptop",
-  },
-  {
-    name: "Sport Watches",
+    name: "Clothes",
+    link: "/products?category=Cloths",
   },
   {
     name: "Events",
+    link: "/events",
   },
 ];
 
 export const footerSupportLinks = [
   {
     name: "FAQ",
+    link: "/faq",
   },
   {
-    name: "Reviews",
+    name: "Contact us",
+    link: "/contact",
   },
   {
-    name: "Contact Us",
-  },
-  {
-    name: "Shipping",
-  },
-  {
-    name: "Live chat",
+    name: "Shipping Policies",
+    link: "/shipping",
   },
 ];

@@ -64,7 +64,7 @@ function UserAddress() {
       <div className="flex w-full items-center justify-between pb-2">
         <h1 className="text-xl font-semibold">My Addresses</h1>
         <button
-          className="inline-block rounded-md bg-black px-8 py-2.5 text-white"
+          className="rounded-md border-2 border-blue-600 bg-transparent px-6 py-2 text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           onClick={() => setOpen(true)}
         >
           Add New

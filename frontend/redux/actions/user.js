@@ -46,28 +46,37 @@ export const loadSeller = () => async (dispatch) => {
   }
 };
 
-// update user information
-export const updateUserInfomation =
-  (email, name, password, phoneNumber) => async (dispatch) => {
-    try {
-      dispatch(updateUserInfoRequest());
-      const { data } = await axios.put(
-        `${server}/user/update-user-info`,
-        {
-          email,
-          name,
-          password,
-          phoneNumber,
-        },
-        {
-          withCredentials: true,
-        },
-      );
-      dispatch(updateUserInfoSuccess(data.user));
-    } catch (error) {
-      dispatch(updateUserInfoFailed(error.response.data.message));
-    }
-  };
+
+
+export const updateUserInfomation = (name, phoneNumber) => async (dispatch) => {
+  try {
+    dispatch(updateUserInfoRequest())
+    const { data } = await axios.put(
+      `${server}/user/update-user-info`,
+      {
+        name,
+        phoneNumber,
+      },
+      {
+        withCredentials: true,
+      },
+    )
+
+    dispatch(updateUserInfoSuccess(data.user))
+
+    return data
+  } catch (error) {
+    // Get a user-friendly error message
+    const errorMessage = error.response?.data?.message || "Failed to update profile"
+    // Dispatch the user-friendly error message
+    dispatch(updateUserInfoFailed(errorMessage))
+
+    // Return the error for component-level handling
+    return { success: false, error: errorMessage }
+  }
+}
+
+
 
 // update user address
 export const updateUserAddress =

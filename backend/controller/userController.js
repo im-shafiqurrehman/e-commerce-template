@@ -149,42 +149,39 @@ export const Logout = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-// update user info
+
+
+// update user info - simplified to only update name and phone number
 export const updateUserInfo = catchAsyncErrors(async (req, res, next) => {
   try {
-    const { email, name, password, phoneNumber } = req.body;
+    const { name, phoneNumber } = req.body
 
-    // console.log("Received phoneNumber:", phoneNumber);
+    // Ensure the user exists - find by ID from token
+    const userId = req.user.id
+    const user = await userModel.findById(userId)
 
-    // Ensure the user exists
-    const user = await userModel.findOne({ email }).select("+password");
     if (!user) {
-      return next(new ErrorHandler("User not found", 404));
+      return next(new ErrorHandler("User not found", 404))
     }
 
-    // Check if the password is correct
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      return next(new ErrorHandler("Incorrect password", 400));
-    }
+    // Update only name and phone number
+    user.name = name
+    user.phoneNumber = phoneNumber
 
-    // Update user information
-    user.name = name;
-    user.email = email;
-    user.phoneNumber = phoneNumber;
-
-    // console.log("Updating user with phoneNumber:", user.phoneNumber);
-
-    await user.save();
+    await user.save()
 
     res.status(200).json({
       success: true,
       user,
-    });
+      message: "Profile updated successfully",
+    })
   } catch (error) {
-    return next(new ErrorHandler(error.message, 500));
+    console.error("Error in updateUserInfo:", error)
+    return next(new ErrorHandler(error.message || "Failed to update profile", 500))
   }
-});
+})
+
+
 
 // update user avatar
 export const updateUserAvatar = catchAsyncErrors(async (req, res, next) => {
@@ -314,46 +311,28 @@ export const getUserInfo = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-
-
-
-
-
-
-
-export const sendContactForm = async (req, res, next) => {
+export const sendContactForm = async (req, res) => {
   try {
-      const { email, subject, template, data, html: directHtml } = req.body;
+    const { email, subject, directHtml } = req.body;
 
-      // Validate required fields
-      if (!email || !subject || (!template && !directHtml)) {
-          return next(new ErrorHandler("Please provide all required fields", 400));
-      }
+    // Validate required fields
+    if (!email || !subject || !directHtml) {
+      return res.status(400).json({ success: false, message: "Please provide all required fields" });
+    }
 
-      // Render the email content
-      let htmlContent;
-      if (template) {
-          const templatePath = join(__dirname, "..", "mails", template); // Construct the template path
-          htmlContent = await ejs.renderFile(templatePath, data); // Render the template with data
-      } else {
-          htmlContent = directHtml; // Use direct HTML if no template is provided
-      }
+    // Send the email using the sendMail service
+    await sendMail({
+      email,
+      subject,
+      html: directHtml,
+    });
 
-      // Send the email using the sendMail service
-      await sendMail({
-          email,
-          subject,
-          html: htmlContent,
-      });
-
-      res.status(200).json({
-          success: true,
-          message: "Email sent successfully",
-      });
+    res.status(200).json({
+      success: true,
+      message: "Email sent successfully",
+    });
   } catch (error) {
-      console.error("Error in sendContactForm:", error);
-      next(new ErrorHandler(error.message, 500));
+    console.error("Error in sendContactForm:", error);
+    res.status(500).json({ success: false, message: error.message || "Failed to send email" });
   }
 };
-
-

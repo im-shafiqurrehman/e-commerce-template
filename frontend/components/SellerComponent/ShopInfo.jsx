@@ -38,17 +38,23 @@ function ShopInfo({ isOwner }) {
   
   const handleLogout = async () => {
     try {
-      const res = await axios.get(`${server}/user/logout`, {
+      // First, clear any localStorage items
+      localStorage.removeItem("seller_token")
+  
+      // Then make the logout request
+      const res = await axios.get(`${server}/shop/logout`, {
         withCredentials: true,
-      });
-      toast.success(res.data.message);
-      router.push("/login");
-      window.location.reload(true); // Hard refresh
+      })
+  
+      toast.success(res.data.message)
+  
+      // Force a hard refresh to ensure all state is cleared
+      window.location.href = "/login"
     } catch (error) {
-      console.log(error.message);
-      toast.error(error.response?.data?.message || "Logout failed");
+      console.error("Logout error:", error)
+      toast.error(error.response?.data?.message || "Logout failed")
     }
-  };
+  }
 
   const productReviewsLength =
     products &&
@@ -77,7 +83,7 @@ function ShopInfo({ isOwner }) {
               src={
                 data.avatar
                   ? `${backend_url}/${data.avatar}`
-                  : "/assets/fallback-image.png"
+                  : "/assets/placeholder.png"
               }
               alt="Seller Avatar"
               className="h-32 w-32 rounded-full border-4 border-gray-200 object-cover"

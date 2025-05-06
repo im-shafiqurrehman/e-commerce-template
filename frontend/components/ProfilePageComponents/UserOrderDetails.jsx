@@ -98,7 +98,7 @@ function UserOrderDetails() {
                 src={
                   item.images[0]
                     ? `${backend_url}/${item.images[0]}`
-                    : "/assets/fallback-image.png"
+                    : "/assets/placeholder.png"
                 }
                 className="h-20 w-20 bg-white object-contain"
                 alt={item.name || "Product"}
@@ -193,7 +193,7 @@ function UserOrderDetails() {
                 src={
                   selectedItem?.images[0]
                     ? `${backend_url}/${selectedItem.images[0]}`
-                    : "/assets/fallback-image.png"
+                    : "/assets/placeholder.png"
                 }
                 alt={selectedItem?.name || "Product"}
                 className="h-[80px] w-[80px]"

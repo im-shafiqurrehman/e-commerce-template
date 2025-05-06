@@ -142,7 +142,7 @@ function ProductDetail({ data }) {
                   src={
                     images && images.length > 0
                       ? `${backend_url}/${images[select]}`
-                      : "/assets/fallback-image.png"
+                      : "/assets/placeholder.png"
                   }
                   className="mb-4 max-h-[350px] w-[80%] object-contain"
                   alt={name || "Product Image"}
@@ -252,7 +252,7 @@ function ProductDetail({ data }) {
                         src={
                           shop?.avatar
                             ? `${backend_url}/${shop.avatar}`
-                            : "/assets/fallback-image.png"
+                            : "/assets/placeholder.png"
                         }
                         className="h-12 w-12 rounded-full"
                         alt={shop?.name || "Shop Avatar"}

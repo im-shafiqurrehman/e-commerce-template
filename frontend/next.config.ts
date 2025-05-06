@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "cdn.shopify.com", pathname: "**" },
@@ -18,7 +17,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "shopo.quomodothemes.website", pathname: "**" },
       { protocol: "https", hostname: "hamart-shop.vercel.app", pathname: "**" },
       { protocol: "https", hostname: "via.placeholder.com", pathname: "**" },
-      { protocol: "http", hostname: "localhost", port: "8000", pathname: "**" }, // Added for localhost:8000
+      { protocol: "https", hostname: "i5.walmartimages.com", pathname: "**" },
+      { protocol: "http", hostname: "localhost", port: "8000", pathname: "**" },
     ],
   },
 };

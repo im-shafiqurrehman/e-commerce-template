@@ -25,7 +25,7 @@ function DropDown({ categoriesData, setDropDown }) {
             onClick={() => handleSubmit(item)}
           >
             <Image
-              src={item.image_Url || "/assets/fallback-image.png"}
+              src={item.image_Url || "/assets/placeholder.png"}
               className="w-6 h-6 object-contain ml-2.5 select-none"
               alt={item.title || "Category"}
               width={24}

@@ -24,27 +24,27 @@ export const navItems = [
 
 // categories data
 export const categoriesData = [
-  {
-    id: 1,
-    title: "Computers and Laptops",
-    subTitle: "",
-    image_Url:
-      "https://cdn.shopify.com/s/files/1/1706/9177/products/NEWAppleMacbookProwithM1ProChip14InchLaptop2021ModelMKGQ3LL_A_16GB_1TBSSD_custommacbd.jpg?v=1659592838",
-  },
-  {
-    id: 2,
-    title: "cosmetics and body care",
-    subTitle: "",
-    image_Url:
-      "https://indian-retailer.s3.ap-south-1.amazonaws.com/s3fs-public/2021-07/kosme1.png",
-  },
-  {
-    id: 3,
-    title: "Accesories",
-    subTitle: "",
-    image_Url:
-      "https://img.freepik.com/free-vector/ordering-goods-online-internet-store-online-shopping-niche-e-commerce-website-mother-buying-babies-clothes-footwear-toys-infant-accessories_335657-2345.jpg?w=2000",
-  },
+  // {
+  //   id: 1,
+  //   title: "Computers and Laptops",
+  //   subTitle: "",
+  //   image_Url:
+  //     "https://cdn.shopify.com/s/files/1/1706/9177/products/NEWAppleMacbookProwithM1ProChip14InchLaptop2021ModelMKGQ3LL_A_16GB_1TBSSD_custommacbd.jpg?v=1659592838",
+  // },
+  // {
+  //   id: 2,
+  //   title: "cosmetics and body care",
+  //   subTitle: "",
+  //   image_Url:
+  //     "https://indian-retailer.s3.ap-south-1.amazonaws.com/s3fs-public/2021-07/kosme1.png",
+  // },
+  // {
+  //   id: 3,
+  //   title: "Accesories",
+  //   subTitle: "",
+  //   image_Url:
+  //     "https://img.freepik.com/free-vector/ordering-goods-online-internet-store-online-shopping-niche-e-commerce-website-mother-buying-babies-clothes-footwear-toys-infant-accessories_335657-2345.jpg?w=2000",
+  // },
   {
     id: 4,
     title: "Cloths",
@@ -56,34 +56,34 @@ export const categoriesData = [
     id: 5,
     title: "Shoes",
     subTitle: "",
-    image_Url: "/assets/placeholder.png", // Replaced failing URL
+    image_Url: "https://i5.walmartimages.com/seo/Dumajo-Mens-Shoes-Fashion-Running-Sneaker-Casual-Leather-Sport-Shoes-Breathable-Comfortable-Walking-Shoes_61aded78-ba79-4b63-95af-8d3ba15d6eac.6466ccd16eec3b797d1e5ed526148b83.jpeg", // Replaced failing URL
   },
-  {
-    id: 6,
-    title: "Gifts",
-    subTitle: "",
-    image_Url:
-      "https://cdn-icons-png.flaticon.com/128/2349/2349820.png",
-  },
-  {
-    id: 7,
-    title: "Pet Care",
-    subTitle: "",
-    image_Url: "https://cdn-icons-png.flaticon.com/128/2002/2002543.png",
-  },
-  {
-    id: 8,
-    title: "Mobile and Tablets",
-    subTitle: "",
-    image_Url: "/assets/placeholder.png",
-  },
-  {
-    id: 9,
-    title: "Music and Gaming",
-    subTitle: "",
-    image_Url:
-      "https://static.vecteezy.com/system/resources/previews/011/996/555/original/3d-black-headphone-illustration-ecommerce-icon-png.png",
-  },
+  // {
+  //   id: 6,
+  //   title: "Gifts",
+  //   subTitle: "",
+  //   image_Url:
+  //     "https://cdn-icons-png.flaticon.com/128/2349/2349820.png",
+  // },
+  // {
+  //   id: 7,
+  //   title: "Pet Care",
+  //   subTitle: "",
+  //   image_Url: "https://cdn-icons-png.flaticon.com/128/2002/2002543.png",
+  // },
+  // {
+  //   id: 8,
+  //   title: "Mobile and Tablets",
+  //   subTitle: "",
+  //   image_Url: "/assets/placeholder.png",
+  // },
+  // {
+  //   id: 9,
+  //   title: "Music and Gaming",
+  //   subTitle: "",
+  //   image_Url:
+  //     "https://static.vecteezy.com/system/resources/previews/011/996/555/original/3d-black-headphone-illustration-ecommerce-icon-png.png",
+  // },
   {
     id: 10,
     title: "Others",

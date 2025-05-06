@@ -16,7 +16,7 @@ function EventCard({ data }) {
           src={
             data?.images && data.images.length > 0
               ? `${backend_url}/${data.images[0]}`
-              : "/assets/fallback-image.png"
+              : "/assets/placeholder.png"
           }
           alt={data?.name || "Event Image"}
           width={384} // max-w-sm = ~384px

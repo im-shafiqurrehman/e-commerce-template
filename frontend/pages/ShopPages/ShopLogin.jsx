@@ -51,8 +51,6 @@ function ShopLogin() {
     e.preventDefault()
     setLoading(true)
     try {
-      console.log("Attempting shop login with:", { email, withCredentials: true })
-
       // Don't include the token in the login request
       const res = await axios.post(
         `${server}/shop/login-shop`,
@@ -64,8 +62,6 @@ function ShopLogin() {
           },
         },
       )
-
-      console.log("Login response:", res.data)
 
       if (res.data.success) {
         // Store token in localStorage as a backup

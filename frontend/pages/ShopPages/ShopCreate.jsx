@@ -151,11 +151,11 @@ function ShopCreate() {
         withCredentials: true,
       }
 
-      console.log("Submitting shop creation with config:", {
-        url: `${server}/shop/create-shop`,
-        withCredentials: config.withCredentials,
-        hasAuthHeader: !!config.headers.Authorization,
-      })
+      // console.log("Submitting shop creation with config:", {
+      //   url: `${server}/shop/create-shop`,
+      //   withCredentials: config.withCredentials,
+      //   hasAuthHeader: !!config.headers.Authorization,
+      // })
 
       const response = await axios.post(`${server}/shop/create-shop`, formData, config)
 

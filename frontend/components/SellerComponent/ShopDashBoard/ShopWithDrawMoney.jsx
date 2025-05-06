@@ -1,8 +1,9 @@
-"use-client"
+"use client";
+
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllOrdersOfShop } from "../../../redux/actions/order";
-import { getAllShopProducts } from "../../../redux/actions/product";
+import { getAllOrdersOfShop } from "@/redux/actions/order"; // Adjust path based on your project structure
+import { getAllShopProducts } from "@/redux/actions/product"; // Adjust path based on your project structure
 
 function ShopWithDrawMoney() {
   const dispatch = useDispatch();
@@ -11,20 +12,24 @@ function ShopWithDrawMoney() {
   const [deliveredOrder, setDeliveredOrder] = useState(null);
 
   useEffect(() => {
-    dispatch(getAllOrdersOfShop(seller._id));
-    dispatch(getAllShopProducts(seller._id));
+    if (seller?._id) {
+      dispatch(getAllOrdersOfShop(seller._id));
+      dispatch(getAllShopProducts(seller._id));
+    }
 
     const orderData =
-      orders && orders.filter((item) => item.state === "Delivered");
+      orders && Array.isArray(orders) && orders.filter((item) => item.state === "Delivered");
     setDeliveredOrder(orderData);
-  }, [dispatch, seller._id, orders]);
+  }, [dispatch, seller?._id, orders]);
 
   const totalEarningWithoutTax =
     deliveredOrder &&
-    deliveredOrder.reduce((acc, item) => acc + item.totalPrice, 0);
+    deliveredOrder.reduce((acc, item) => acc + (item.totalPrice || 0), 0);
 
-  const serviceCharge = totalEarningWithoutTax * 0.1;
-  const availableBalance = (totalEarningWithoutTax - serviceCharge).toFixed(2);
+  const serviceCharge = totalEarningWithoutTax ? totalEarningWithoutTax * 0.1 : 0;
+  const availableBalance = totalEarningWithoutTax
+    ? (totalEarningWithoutTax - serviceCharge).toFixed(2)
+    : "0.00";
 
   return (
     <div className="h-[80vh] w-full p-6">

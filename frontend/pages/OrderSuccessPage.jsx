@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Lottie from "react-lottie";
-import animationData from "@/Assests/animations/107043-success.json";
+import animationData from "../public/assets/Assests/animations/107043-success.json";
 import CheckOutSteps from "@/components/CheckOut/CheckOutSteps";
 
 function OrderSuccessPage() {

@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import Image from "next/image";
 import { backend_url } from "@/lib/server";
+import logo from "../../../public/assets/logo1.png";
 
 function DashBoardHeader() {
   const { seller } = useSelector((state) => state.seller);
@@ -16,15 +17,15 @@ function DashBoardHeader() {
       <div className="flex h-20 items-center justify-between px-4">
         {/* logo */}
         <div className="">
-          <Link href="/">
-            <Image
-              src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-              alt="Logo"
-              width={150}
-              height={40}
-              priority
-            />
-          </Link>
+        <Link href="/">
+              <Image
+                src={logo}
+                alt="Logo"
+                width={100}
+                height={10}
+                className="w-[120px] md:w-[100px]"
+              />
+            </Link>
         </div>
         {/* dashboard navbar icons */}
         <div className="flex items-center gap-10">

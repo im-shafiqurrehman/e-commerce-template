@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import CheckOut from "@/components/CheckOut/CheckOut";
-import CheckOutSteps from "@/components/CheckOutSteps";
+import CheckOutSteps from "../components/CheckOut/CheckOutSteps";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 

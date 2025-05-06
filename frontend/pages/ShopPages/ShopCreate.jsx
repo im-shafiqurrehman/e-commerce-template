@@ -26,77 +26,162 @@ function ShopCreate() {
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((state) => state.user);
 
-  const router = useRouter();
+  // const router = useRouter();
+
+  // useEffect(() => {
+  //   if (isSeller) {
+  //     router.push("/dashboard");
+  //   }
+  //   if (user?.role !== "admin") {
+  //     router.replace("/");
+  //   }
+  // }, [isSeller, router]);
+
+  // const handleFileInputChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setAvatar(file);
+  //     setAvatarPreview(URL.createObjectURL(file));
+  //   }
+  // };
+
+  // const togglePasswordVisibility = () => {
+  //   setPasswordVisible(!passwordVisible);
+  // };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   const formData = new FormData();
+  //   formData.append("name", name);
+  //   formData.append("email", email);
+  //   formData.append("password", password);
+  //   formData.append("zipCode", zipCode);
+  //   formData.append("phoneNumber", phoneNumber);
+  //   formData.append("address", address);
+  //   if (avatar) {
+  //     formData.append("file", avatar);
+  //   }
+
+  //   try {
+  //     const config = {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     };
+
+  //     const response = await axios.post(
+  //       `${server}/shop/create-shop`,
+  //       formData,
+  //       config,
+  //     );
+
+  //     if (response.data.success) {
+  //       toast.success(response.data.message);
+  //       setName("");
+  //       setEmail("");
+  //       setPassword("");
+  //       setAvatar(null);
+  //       setAvatarPreview(null);
+  //       setAddress("");
+  //       setPhoneNumber("");
+  //       setZipCode("");
+  //       router.push("/shop-login"); // Redirect to shop-login on success
+  //     } else {
+  //       toast.error(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.response?.data?.message || "An error occurred");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+
+  const router = useRouter()
 
   useEffect(() => {
     if (isSeller) {
-      router.push("/dashboard");
+      router.push("/dashboard")
     }
     if (user?.role !== "admin") {
-      router.replace("/");
+      router.replace("/")
     }
-  }, [isSeller, router]);
+  }, [isSeller, router, user])
 
   const handleFileInputChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     if (file) {
-      setAvatar(file);
-      setAvatarPreview(URL.createObjectURL(file));
+      setAvatar(file)
+      setAvatarPreview(URL.createObjectURL(file))
     }
-  };
+  }
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+    setPasswordVisible(!passwordVisible)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("zipCode", zipCode);
-    formData.append("phoneNumber", phoneNumber);
-    formData.append("address", address);
+    const formData = new FormData()
+    formData.append("name", name)
+    formData.append("email", email)
+    formData.append("password", password)
+    formData.append("zipCode", zipCode)
+    formData.append("phoneNumber", phoneNumber)
+    formData.append("address", address)
     if (avatar) {
-      formData.append("file", avatar);
+      formData.append("file", avatar)
     }
 
     try {
+      // Get the token from cookies or localStorage
+      const token = localStorage.getItem("token")
+
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
+          // Include token in Authorization header as fallback
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
-      };
+        withCredentials: true,
+      }
 
-      const response = await axios.post(
-        `${server}/shop/create-shop`,
-        formData,
-        config,
-      );
+      console.log("Submitting shop creation with config:", {
+        url: `${server}/shop/create-shop`,
+        withCredentials: config.withCredentials,
+        hasAuthHeader: !!config.headers.Authorization,
+      })
+
+      const response = await axios.post(`${server}/shop/create-shop`, formData, config)
 
       if (response.data.success) {
-        toast.success(response.data.message);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAvatar(null);
-        setAvatarPreview(null);
-        setAddress("");
-        setPhoneNumber("");
-        setZipCode("");
-        router.push("/shop-login"); // Redirect to shop-login on success
+        toast.success(response.data.message)
+        setName("")
+        setEmail("")
+        setPassword("")
+        setAvatar(null)
+        setAvatarPreview(null)
+        setAddress("")
+        setPhoneNumber("")
+        setZipCode("")
+        router.push("/shop-login") // Redirect to shop-login on success
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.message)
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "An error occurred");
+      console.error("Shop creation error:", error.response || error)
+      toast.error(error.response?.data?.message || "An error occurred")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+
 
   return (
     <div>

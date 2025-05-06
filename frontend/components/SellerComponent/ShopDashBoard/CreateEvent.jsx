@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { categoriesData } from "../lib/data";
-import { clearErrors, resetEventState } from "../redux/reducers/event";
-import { createEvent } from "../redux/actions/event";
+import { categoriesData } from "../../../lib/data";
+import { clearErrors, resetEventState } from "../../../redux/reducers/event";
+import { createEvent } from "../../../redux/actions/event";
 import Image from "next/image";
 
 function CreateEvent() {

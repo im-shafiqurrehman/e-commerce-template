@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ProductCard from "./ProductCard";
+import ProductCard from "../ProductCard";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllShopProducts } from "../redux/actions/product";
-import Ratings from "./Ratings";
+import { getAllShopProducts } from "@/redux/actions/product";
+import Ratings from "../Ratings";
 import moment from "moment";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import Image from "next/image";

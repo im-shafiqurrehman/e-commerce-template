@@ -12,73 +12,91 @@ import { loadSellerSuccess } from "@/redux/reducers/seller"; // Added for Redux 
 import { redirect } from "next/navigation";
 
 function ShopLogin() {
-  const dispatch = useDispatch(); // Added for Redux dispatch
-  const { isSeller, seller } = useSelector((state) => state.seller);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false); // Added for Remember Me
-  const [loading, setLoading] = useState(false); // Added for loading effect
-  const { user } = useSelector((state) => state.user);
-  const router = useRouter();
+  const dispatch = useDispatch()
+  const { isSeller, seller } = useSelector((state) => state.seller)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const { user } = useSelector((state) => state.user)
+  const router = useRouter()
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem("rememberedShopEmail");
-    const savedPassword = localStorage.getItem("rememberedShopPassword");
+    const savedEmail = localStorage.getItem("rememberedShopEmail")
+    const savedPassword = localStorage.getItem("rememberedShopPassword")
     if (savedEmail && savedPassword) {
-      setEmail(savedEmail);
-      setPassword(savedPassword);
-      setRememberMe(true);
+      setEmail(savedEmail)
+      setPassword(savedPassword)
+      setRememberMe(true)
     }
     if (isSeller) {
-      router.push("/dashboard");
+      router.push("/dashboard")
     }
     if (user?.role !== "admin") {
-      router.replace("/");
+      router.replace("/")
     }
-  }, [isSeller, seller, router]);
+  }, [isSeller, seller, router, user])
 
   // Prevent rendering if authenticated
   if (isSeller) {
-    return null; // Added to prevent flash
+    return null
   }
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+    setPasswordVisible(!passwordVisible)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true); // Set loading state
+    e.preventDefault()
+    setLoading(true)
     try {
+      console.log("Attempting shop login with:", { email, withCredentials: true })
+
+      // Don't include the token in the login request
       const res = await axios.post(
         `${server}/shop/login-shop`,
-        { email, password, rememberMe }, // Added rememberMe to payload
-        { withCredentials: true }
-      );
+        { email, password, rememberMe },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      )
+
+      console.log("Login response:", res.data)
+
       if (res.data.success) {
-        dispatch(loadSellerSuccess(res.data.seller)); // Added to update Redux state
-        if (rememberMe) {
-          localStorage.setItem("rememberedShopEmail", email);
-          localStorage.setItem("rememberedShopPassword", password);
-        } else {
-          localStorage.removeItem("rememberedShopEmail");
-          localStorage.removeItem("rememberedShopPassword");
+        // Store token in localStorage as a backup
+        if (res.data.token) {
+          localStorage.setItem("seller_token", res.data.token)
         }
-        toast.success("User successfully logged in");
-        router.push("/dashboard"); // Navigate to dashboard
+
+        dispatch(loadSellerSuccess(res.data.shop))
+
+        if (rememberMe) {
+          localStorage.setItem("rememberedShopEmail", email)
+          localStorage.setItem("rememberedShopPassword", password)
+        } else {
+          localStorage.removeItem("rememberedShopEmail")
+          localStorage.removeItem("rememberedShopPassword")
+        }
+
+        toast.success("Shop successfully logged in")
+        router.push("/dashboard")
       }
     } catch (error) {
+      console.error("Login error:", error.response || error)
       if (error.response && error.response.data.message) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.message)
       } else {
-        toast.error("An error occurred. Please try again.");
+        toast.error("An error occurred. Please try again.")
       }
-      console.log(error);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div>
@@ -94,17 +112,9 @@ function ShopLogin() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Log in to your shop
               </h1>
-              <form
-                onSubmit={handleSubmit}
-                className="space-y-4 md:space-y-6"
-                action
-="#"
-              >
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
                     Your email
                   </label>
                   <input
@@ -116,14 +126,11 @@ function ShopLogin() {
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     placeholder="name@company.com"
                     required
-                    disabled={loading} // Added for loading effect
+                    disabled={loading}
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
                     Password
                   </label>
                   <div className="relative">
@@ -135,20 +142,16 @@ function ShopLogin() {
                       onChange={(e) => setPassword(e.target.value)}
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                       required
-                      disabled={loading} // Added for loading effect
+                      disabled={loading}
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5">
                       <button
                         type="button"
                         onClick={togglePasswordVisibility}
                         className="focus:outline-none"
-                        disabled={loading} // Added for loading effect
+                        disabled={loading}
                       >
-                        {passwordVisible ? (
-                          <FaEyeSlash size={18} />
-                        ) : (
-                          <FaEye size={18} />
-                        )}
+                        {passwordVisible ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                       </button>
                     </div>
                   </div>
@@ -161,16 +164,13 @@ function ShopLogin() {
                         aria-describedby="remember"
                         type="checkbox"
                         className="focus:ring-3 h-4 w-4 rounded border border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                        checked={rememberMe} // Bind checkbox state
-                        onChange={(e) => setRememberMe(e.target.checked)} // Update state
-                        disabled={loading} // Added for loading effect
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        disabled={loading}
                       />
                     </div>
                     <div className="ml-3 text-sm">
-                      <label
-                        htmlFor="remember"
-                        className="text-gray-500 dark:text-gray-300"
-                      >
+                      <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">
                         Remember me
                       </label>
                     </div>
@@ -178,8 +178,8 @@ function ShopLogin() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center" // Added flex for spinner alignment
-                  disabled={loading} // Added for loading effect
+                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center"
+                  disabled={loading}
                 >
                   {loading ? (
                     <>
@@ -210,11 +210,8 @@ function ShopLogin() {
                   )}
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  Don’t have an account yet?{" "}
-                  <Link
-                    href="/shop-create"
-                    className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-                  >
+                  Don't have an account yet?{" "}
+                  <Link href="/shop-create" className="font-medium text-blue-600 hover:underline dark:text-blue-500">
                     Sign up
                   </Link>
                 </p>
@@ -224,7 +221,7 @@ function ShopLogin() {
         </div>
       </section>
     </div>
-  );
+  )
 }
 
-export default ShopLogin;
+export default ShopLogin

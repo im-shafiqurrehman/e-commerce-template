@@ -18,7 +18,7 @@ import { addTocartAction, removeFromCartAction } from "../redux/actions/cart";
 import {
   addToWishlistAction,
   removeFromWishlistAction,
-} from "../redux/actions/wishlist";
+} from "../redux/actions/whishlist";
 import axios from "axios";
 import { toast } from "react-toastify";
 

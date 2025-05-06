@@ -1,5 +1,7 @@
+"use client"
+
 /* eslint-disable no-unused-vars */
-import { City, Country } from "country-state-city";
+import { City, Country } from "country-state-city"
 
 function ShippingInfo({
   user,
@@ -18,14 +20,11 @@ function ShippingInfo({
 }) {
   return (
     <div className="mt-4 w-full rounded-md bg-white p-6 shadow-sm md:w-3/5">
-      <h5 className="pb-2 font-Poppins font-semibold">Shipping Address</h5>
+      <h5 className="pb-2 font-Poppins text-lg font-semibold text-gray-800">Shipping Address</h5>
       <form>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
           <div>
-            <label
-              htmlFor="name"
-              className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
               Full Name
             </label>
             <input
@@ -36,10 +35,7 @@ function ShippingInfo({
             />
           </div>
           <div>
-            <label
-              htmlFor="email"
-              className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
               Email Address
             </label>
             <input
@@ -52,10 +48,7 @@ function ShippingInfo({
         </div>
         <div className="mt-2 grid grid-cols-1 gap-2 sm:mt-4 sm:grid-cols-2 sm:gap-4">
           <div>
-            <label
-              htmlFor="phoneNumber"
-              className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="phoneNumber" className="mb-1 block text-sm font-medium text-gray-700">
               Phone Number
             </label>
             <input
@@ -66,10 +59,7 @@ function ShippingInfo({
             />
           </div>
           <div>
-            <label
-              htmlFor="zipcode"
-              className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="zipcode" className="mb-1 block text-sm font-medium text-gray-700">
               Zip Code
             </label>
             <input
@@ -83,10 +73,7 @@ function ShippingInfo({
         </div>
         <div className="mt-2 grid grid-cols-1 gap-2 sm:mt-4 sm:grid-cols-2 sm:gap-4">
           <div>
-            <label
-              htmlFor="selectedCountry"
-              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="selectedCountry" className="mb-2 block text-sm font-medium text-gray-700">
               Country
             </label>
             <select
@@ -105,10 +92,7 @@ function ShippingInfo({
             </select>
           </div>
           <div>
-            <label
-              htmlFor="selectedCity"
-              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="selectedCity" className="mb-2 block text-sm font-medium text-gray-700">
               City
             </label>
             <select
@@ -129,10 +113,7 @@ function ShippingInfo({
         </div>
         <div className="mt-2 grid grid-cols-1 gap-2 sm:mt-4 sm:grid-cols-2 sm:gap-4">
           <div>
-            <label
-              htmlFor="address1"
-              className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="address1" className="mb-1 block text-sm font-medium text-gray-700">
               Address 1
             </label>
             <input
@@ -144,11 +125,8 @@ function ShippingInfo({
             />
           </div>
           <div>
-            <label
-              htmlFor="address2"
-              className="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Address 2
+            <label htmlFor="address2" className="mb-1 block text-sm font-medium text-gray-700">
+              Address 2 (Delivery Address)
             </label>
             <input
               type="text"
@@ -161,19 +139,20 @@ function ShippingInfo({
         </div>
       </form>
       <h5
-        className="mt-3 inline-block cursor-pointer"
+        className="mt-5 inline-block cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline"
         onClick={() => setUserInfo(!userInfo)}
       >
         Choose from saved address
       </h5>
       {userInfo && (
-        <div>
+        <div className="mt-3 space-y-2 rounded-md border border-gray-200 bg-gray-50 p-3">
           {user &&
             user.addresses.map((item, index) => (
-              <div className="flex w-full" key={index}>
+              <div className="flex w-full items-center" key={index}>
                 <input
                   type="checkbox"
-                  className="mr-1"
+                  id={`address-${index}`}
+                  className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   value={item.addressType}
                   onClick={() =>
                     setAddress1(item.address1) ||
@@ -183,13 +162,15 @@ function ShippingInfo({
                     setCity(item.city)
                   }
                 />
-                <h2 className="">{item.addressType}</h2>
+                <label htmlFor={`address-${index}`} className="text-sm font-medium text-gray-700 cursor-pointer">
+                  {item.addressType}
+                </label>
               </div>
             ))}
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default ShippingInfo;
+export default ShippingInfo

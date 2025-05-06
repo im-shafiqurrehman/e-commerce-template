@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { categoriesData } from "../lib/data";
+import { categoriesData } from "../../../lib/data";
 import { FaPlus } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import {
   clearErrors,
   resetProductState,
-} from "../redux/reducers/product";
-import { createProduct } from "../redux/actions/product";
+} from "../../../redux/reducers/product";
+import { createProduct } from "../../../redux/actions/product";
 import Image from "next/image";
 
 function CreateProduct() {

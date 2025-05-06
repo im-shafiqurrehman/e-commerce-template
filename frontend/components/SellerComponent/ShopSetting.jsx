@@ -1,24 +1,23 @@
-/* eslint-disable no-unused-vars */
+"use client";
+
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { backend_url, server } from "../../server";
+import { backend_url, server } from "@/lib/server"; // Adjust path
 import { AiOutlineCamera } from "react-icons/ai";
 import axios from "axios";
-import { loadSeller } from "../../redux/actions/user";
+import { loadSeller } from "@/redux/actions/user"; // Adjust path
 import { toast } from "react-toastify";
 
-const ShopSetting = () => {
-  const { seller } = useSelector((state) => state.seller);
-  const [avatar, setAvatar] = useState();
-  const [name, setName] = useState(seller && seller.name);
-  const [description, setDescription] = useState(
-    seller && seller.description ? seller.description : ""
-  );
-  const [address, setAddress] = useState(seller && seller.address);
-  const [phoneNumber, setPhoneNumber] = useState(seller && seller.phoneNumber);
-  const [zipCode, setZipcode] = useState(seller && seller.zipCode);
-
+function ShopSetting() {
+  const { seller } = useSelector((state) => state.seller) || {};
   const dispatch = useDispatch();
+
+  const [avatar, setAvatar] = useState(null);
+  const [name, setName] = useState(seller?.name || "");
+  const [description, setDescription] = useState(seller?.description || "");
+  const [address, setAddress] = useState(seller?.address || "");
+  const [phoneNumber, setPhoneNumber] = useState(seller?.phoneNumber || "");
+  const [zipCode, setZipCode] = useState(seller?.zipCode || ""); // Fixed typo in setZipcode
 
   const handleImage = async (e) => {
     e.preventDefault();
@@ -28,27 +27,26 @@ const ShopSetting = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    await axios
-      .put(`${server}/shop/update-shop-avatar`, formData, {
+    try {
+      await axios.put(`${server}/shop/update-shop-avatar`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
-      })
-      .then(() => {
-        dispatch(loadSeller());
-        toast.success("Avatar updated successfully!");
-      })
-      .catch((error) => {
-        toast.error(error.message);
       });
+      dispatch(loadSeller());
+      toast.success("Avatar updated successfully!");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error updating avatar");
+      console.error("Avatar upload error:", error);
+    }
   };
 
   const updateHandler = async (e) => {
     e.preventDefault();
 
-    await axios
-      .put(
+    try {
+      await axios.put(
         `${server}/shop/update-seller-info`,
         {
           name,
@@ -58,29 +56,33 @@ const ShopSetting = () => {
           description,
         },
         { withCredentials: true }
-      )
-      .then(() => {
-        toast.success("Shop info updated successfully!");
-        dispatch(loadSeller());
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
+      );
+      dispatch(loadSeller());
+      toast.success("Shop info updated successfully!");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error updating shop info");
+      console.error("Update error:", error);
+    }
   };
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center bg-gray-100 p-4">
-      <div className=" w-full max-w-2xl rounded-lg bg-white p-8 shadow-md">
+      <div className="w-full max-w-2xl rounded-lg bg-white p-8 shadow-md">
         <div className="mb-6 flex w-full items-center justify-center">
           <div className="relative">
             <img
               src={
                 avatar
                   ? URL.createObjectURL(avatar)
-                  : `${backend_url}/${seller?.avatar}`
+                  : seller?.avatar
+                  ? `${backend_url}/${seller.avatar}`
+                  : "/default-avatar.png" // Fallback image
               }
               alt="Shop Avatar"
               className="h-32 w-32 rounded-full border-2 border-gray-300 object-cover"
+              onError={(e) => {
+                e.target.src = "/default-avatar.png"; // Fallback on error
+              }}
             />
             <div className="absolute bottom-0 right-0 cursor-pointer rounded-full bg-gray-800 p-1 text-white">
               <input
@@ -138,7 +140,7 @@ const ShopSetting = () => {
               Shop Phone Number
             </label>
             <input
-              type="number"
+              type="tel"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:outline-none"
@@ -152,7 +154,7 @@ const ShopSetting = () => {
             <input
               type="text"
               value={zipCode}
-              onChange={(e) => setZipcode(e.target.value)}
+              onChange={(e) => setZipCode(e.target.value)}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:outline-none"
               required
             />
@@ -169,6 +171,6 @@ const ShopSetting = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ShopSetting;

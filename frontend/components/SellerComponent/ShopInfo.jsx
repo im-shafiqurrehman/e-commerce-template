@@ -1,15 +1,15 @@
 "use client";
 
 import { useDispatch, useSelector } from "react-redux";
-import { backend_url, server } from "../lib/server";
+import { backend_url, server } from "@/lib/server";
 import { CgProfile } from "react-icons/cg";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getAllShopProducts } from "../redux/actions/product";
-import Loader from "../components/Loader";
+import { getAllShopProducts } from "../../redux/actions/product";
+import Loader from "@/components/Loader";
 import Image from "next/image";
 
 function ShopInfo({ isOwner }) {

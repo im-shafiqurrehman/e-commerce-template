@@ -111,7 +111,7 @@ function OrderDetails() {
               <div className="w-full">
                 <h5 className="font-medium text-gray-800">{item?.name}</h5>
                 <h5 className="text-sm text-gray-500 mt-1">
-                  ${item?.discountPrice} × {item?.qty}
+                  PKR {item?.discountPrice} × {item?.qty}
                 </h5>
               </div>
             </div>
@@ -119,7 +119,7 @@ function OrderDetails() {
 
         <div className="w-full border-t border-gray-200 pt-4 text-right">
           <h5 className="text-lg">
-            Total Price: <strong className="text-[#e94560]">${data?.totalPrice}</strong>
+            Total Price: <strong className="text-[#e94560]">PKR {data?.totalPrice}</strong>
           </h5>
         </div>
       </div>

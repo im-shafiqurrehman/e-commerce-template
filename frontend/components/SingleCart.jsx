@@ -55,7 +55,7 @@ function SingleCart({ data, quantityChangeHandler, removeFromCartHandler }) {
         <div className="w-full">
           <h2 className="font-semibold">{data.name}</h2>
           <h4 className="py-1 text-sm font-normal text-[#00000082]">
-            ${data.discountPrice} * {value}
+            PKR{data.discountPrice} * {value}
           </h4>
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-[#d02222]">${totalPrice.toFixed(2)}</h3>

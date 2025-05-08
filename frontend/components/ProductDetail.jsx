@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import {
   AiFillHeart,
@@ -154,9 +153,8 @@ function ProductDetail({ data }) {
                     images.map((i, index) => (
                       <div
                         key={index}
-                        className={`${
-                          select === index ? "border" : ""
-                        } cursor-pointer`}
+                        className={`${select === index ? "border" : ""
+                          } cursor-pointer`}
                       >
                         <Image
                           src={`${backend_url}/${i}`}
@@ -178,13 +176,14 @@ function ProductDetail({ data }) {
                 <p className="pt-2">
                   {description || "No description available."}
                 </p>
+
                 <div className="flex items-center pt-3">
                   <h5 className="font-Roboto text-[18px] font-bold text-[#333]">
-                    {discountPrice ? discountPrice : originalPrice}$
+                    {discountPrice ? discountPrice : originalPrice}PKR
                   </h5>
                   {discountPrice && (
                     <h5 className="pl-2 text-[16px] font-[500] text-[#d55b45] line-through">
-                      {originalPrice}$
+                      {originalPrice}PKR
                     </h5>
                   )}
                 </div>
@@ -228,11 +227,10 @@ function ProductDetail({ data }) {
                 </div>
                 {/* add to cart button */}
                 <button
-                  className={`my-4 flex items-center gap-2 rounded-md bg-black px-5 py-3 text-white ${
-                    inCart
+                  className={`my-4 flex items-center gap-2 rounded-md bg-black px-5 py-3 text-white ${inCart
                       ? "bg-red-500 hover:bg-red-600"
                       : "bg-black hover:bg-gray-800"
-                  } `}
+                    } `}
                   onClick={handleCartClick}
                 >
                   {inCart ? (

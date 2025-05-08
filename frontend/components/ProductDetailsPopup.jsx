@@ -132,11 +132,11 @@ function ProductDetailsPopup({ setOpen, data }) {
                     {data.discountPrice
                       ? data.discountPrice
                       : data.originalPrice}
-                    $
+                    PKR
                   </h5>
                   {data.discountPrice && (
                     <h5 className="pl-2 text-[16px] font-[500] text-[#d55b45] line-through">
-                      {data.originalPrice}$
+                      {data.originalPrice}PKR
                     </h5>
                   )}
                 </div>

@@ -110,7 +110,7 @@ function UserOrderDetails() {
               <div className="w-full">
                 <h5>{item?.name}</h5>
                 <h5 className="text-sm text-gray-500">
-                  ${item?.discountPrice} * {item?.qty}
+                  PKR{item?.discountPrice} * {item?.qty}
                 </h5>
               </div>
               <div className="">
@@ -132,7 +132,7 @@ function UserOrderDetails() {
 
       <div className="w-full border-t border-black pt-4 text-right">
         <h5 className="text-lg">
-          Total Price: <strong>${data?.totalPrice}</strong>
+          Total Price: <strong>PKR{data?.totalPrice}</strong>
         </h5>
       </div>
       <br />
@@ -205,7 +205,7 @@ function UserOrderDetails() {
                   {selectedItem?.name}
                 </div>
                 <h4 className="pl-3 text-lg">
-                  US${selectedItem?.discountPrice} x {selectedItem?.qty}
+                  PKR{selectedItem?.discountPrice} x {selectedItem?.qty}
                 </h4>
               </div>
             </div>

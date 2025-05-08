@@ -126,7 +126,7 @@ function ShippingInfo({
           </div>
           <div>
             <label htmlFor="address2" className="mb-1 block text-sm font-medium text-gray-700">
-              Address 2 (Delivery Address)
+              Address 2 
             </label>
             <input
               type="text"

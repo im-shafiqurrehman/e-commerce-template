@@ -22,7 +22,7 @@ function SingleWhislist({ data, removeFromWishlistHandler, handleAddToCart }) {
           <div>
             <h2 className="font-semibold">{data.name}</h2>
             <h3 className="text-lg font-semibold text-[#d02222]">
-              ${data.discountPrice}
+              PKR{data.discountPrice}
             </h3>
           </div>
           <div className="cursor-pointer">

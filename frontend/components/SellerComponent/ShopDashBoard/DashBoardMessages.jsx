@@ -230,7 +230,7 @@ function MessageList({
         <span className="absolute left-8 top-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-400 dark:border-gray-800"></span>
       </div>
       <div className="pl-3">
-        <h1 className="text-lg">Hamaad Afzal</h1>
+        <h1 className="text-lg">Shafiq Ur Rehman</h1>
         <p className="text-[#000c]">You: Yeah, Im good</p>
       </div>
     </div>

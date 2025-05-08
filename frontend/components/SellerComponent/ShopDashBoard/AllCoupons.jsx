@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { AiOutlineDelete } from "react-icons/ai";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, Button } from "@mui/material";
-import Loader from "@/components/Loader"; // Adjust path
+import Loader from "@/components/Loader"; 
 import { IoClose } from "react-icons/io5";
 import axios from "axios";
-import { server } from "../../../lib/server"; // Adjust path
+import { server } from "../../../lib/server";
 import { toast } from "react-toastify";
 
 function AllCoupons() {
@@ -21,7 +21,7 @@ function AllCoupons() {
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
   const [coupons, setCoupons] = useState([]);
-  const [minAmount, setMinAmount] = useState(""); // Fixed typo
+  const [minAmount, setMinAmount] = useState(""); 
   const [maxAmount, setMaxAmount] = useState("");
   const [selectedProducts, setSelectedProducts] = useState("");
   const [isLoading, setIsLoading] = useState(false);

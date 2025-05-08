@@ -53,7 +53,7 @@ const CartPopUp = ({ setOpenCart }) => {
               <Link href="/checkout">
                 <div className="flex h-[45px] w-full items-center justify-center rounded-[5px] bg-[#e44343]">
                   <h1 className="text-[18px] font-[600] text-white">
-                    Checkout Now (USD$ {totalPrice.toFixed(2)})
+                    Checkout Now (PKR {totalPrice.toFixed(2)})
                   </h1>
                 </div>
               </Link>

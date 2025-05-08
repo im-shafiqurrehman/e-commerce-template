@@ -35,7 +35,7 @@ function ShopWithDrawMoney() {
     <div className="h-[80vh] w-full p-6">
       <div className="flex h-full w-full flex-col items-center justify-center rounded-md bg-white">
         <h5 className="pb-4 text-[20px]">
-          Available Balance ${availableBalance}
+          Available Balance PKR {availableBalance}
         </h5>
         <button className="inline-block rounded-md bg-indigo-800 px-6 py-2 text-white hover:bg-indigo-900">
           Withdraw

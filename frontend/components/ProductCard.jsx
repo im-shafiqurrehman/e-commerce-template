@@ -100,11 +100,11 @@ function ProductCard({ data, isEvent }) {
         <div className="flex items-center justify-between pt-4">
           <div className="flex items-center">
             <h5 className="font-Roboto text-[18px] font-bold text-[#333]">
-              {data.discountPrice ? data.discountPrice : data.originalPrice}$
+              {data.discountPrice ? data.discountPrice : data.originalPrice}PKR
             </h5>
             {data.discountPrice && (
               <h5 className="pl-2 text-[16px] font-[500] text-[#d55b45] line-through">
-                {data?.originalPrice}$
+                {data?.originalPrice}PKR
               </h5>
             )}
           </div>

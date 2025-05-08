@@ -94,7 +94,7 @@ function ShopAllEvents() {
     events?.map((item) => ({
       id: item._id,
       name: item.name,
-      price: `US$${item.discountPrice}`,
+      price: `PKR ${item.discountPrice}`,
       stock: item.stock,
       sold: 10,
     })) || [];

@@ -82,7 +82,7 @@ function DashBoardHero() {
     orders?.map((item) => ({
       id: item._id,
       itemsQty: item.cart.reduce((acc, item) => acc + item.qty, 0),
-      total: "US$ " + item.totalPrice,
+      total: "PKR " + item.totalPrice,
       status: item.status,
     })) || [];
 
@@ -92,21 +92,21 @@ function DashBoardHero() {
         Dashboard Overview
       </h3>
       <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-lg bg-white p-6 shadow-md">
+        {/* <div className="rounded-lg bg-white p-6 shadow-md">
           <div className="mb-4 flex items-center">
             <AiOutlineMoneyCollect size={30} className="mr-2 text-blue-500" />
             <h3 className="font-Roboto text-[20px] font-medium text-[#333]">
               Account Balance
             </h3>
           </div>
-          <h5 className="text-[22px] font-semibold">${availableBalance}</h5>
+          <h5 className="text-[22px] font-semibold">PKR{availableBalance}</h5>
           <Link
             href="/dashboard/withdraw-money"
             className="mt-4 inline-block text-blue-500"
           >
             Withdraw Money
           </Link>
-        </div>
+        </div> */}
 
         <div className="rounded-lg bg-white p-6 shadow-md">
           <div className="mb-4 flex items-center">

@@ -126,7 +126,7 @@ function DashSidebar({ active }) {
         </Link>
       </div>
 
-      <div className="flex w-full items-center p-4">
+      {/* <div className="flex w-full items-center p-4">
         <Link href="/dashboard-withdraw-money" className="flex w-full items-center">
           <CiMoneyBill
             size={30}
@@ -140,7 +140,7 @@ function DashSidebar({ active }) {
             Withdraw Money
           </h5>
         </Link>
-      </div>
+      </div> */}
 
       <div className="flex w-full items-center p-4">
         <Link href="/dashboard-messages" className="flex w-full items-center">

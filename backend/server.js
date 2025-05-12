@@ -48,6 +48,10 @@ app.use("/api/order", orderRouter);
 app.use("/api/conversation", conversationRouter);
 app.use("/api/message", messageRouter);
 
+app.use("/health", (req, res) => {
+  res.send("Server is running with good health");
+});
+
 // unhandled promise rejection
 process.on("unhandledRejection", (err) => {
   console.log(`Shutting down the server for ${err.message}`);
@@ -60,4 +64,10 @@ app.use(errorHandlerMiddleware);
 // create server
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on http://localhost:${process.env.PORT}`);
+});
+
+
+
+app.use("*", (req, res) => {
+  res.status(404).json({ message: "Route not found" });
 });

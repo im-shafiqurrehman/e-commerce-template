@@ -1,7 +1,11 @@
-"use client";
+"use client"
 
-import ProductDetails from "@/pages/ProductDetails";
+import { use } from "react"
+import ProductDetails from "@/pages/ProductDetails"
 
 export default function ProductDetailsPage({ params }) {
-  return <ProductDetails id={params.id} />;
+  // Use React.use to unwrap the params Promise
+  const unwrappedParams = use(params)
+
+  return <ProductDetails id={unwrappedParams.id} />
 }

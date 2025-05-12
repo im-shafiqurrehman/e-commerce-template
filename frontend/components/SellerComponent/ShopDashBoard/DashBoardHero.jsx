@@ -119,7 +119,7 @@ function DashBoardHero() {
             {orders && orders.length}
           </h5>
           <Link
-            href="/dashboard/orders"
+            href="/dashboard-orders"
             className="mt-4 inline-block text-green-500"
           >
             View Orders
@@ -137,7 +137,7 @@ function DashBoardHero() {
             {products && products.length}
           </h5>
           <Link
-            href="/dashboard/products"
+            href="/dashboard-products"
             className="mt-4 inline-block text-red-500"
           >
             View Products

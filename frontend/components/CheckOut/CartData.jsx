@@ -21,7 +21,7 @@ function CartData({  handleSubmit,
         <div className="flex items-center justify-between gap-4">
           <p className="text-sm text-gray-600">Discount</p>
           <p className="text-base font-semibold text-gray-600">
-          - {discountPercentenge ? "$" + discountPercentenge.toString() : null}
+          - {discountPercentenge ? "PKR" + discountPercentenge.toString() : null}   
           </p>
         </div>
         <hr />

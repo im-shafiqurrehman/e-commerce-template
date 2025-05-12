@@ -13,7 +13,7 @@ function ShopInboxPage() {
         </div>
         {/* create product */}
         <div className="w-full">
-          {/* <DashBoardMessages /> */}
+          <DashBoardMessages />
         </div>
       </div>
     </div>

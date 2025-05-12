@@ -7,7 +7,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
 import Loader from "@/components/Loader";
-import { getAllOrdersOfShop } from "@/redux/actions/order";
+import { getAllOrdersOfShop } from "../../../redux/actions/order";
 
 function ShopAllOrders() {
   const { orders, isLoading } = useSelector((state) => state.orders);

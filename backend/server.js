@@ -51,7 +51,6 @@ app.use("/api/message", messageRouter);
 app.use("/health", (req, res) => {
   res.send("Server is running with good health");
 });
-
 // unhandled promise rejection
 process.on("unhandledRejection", (err) => {
   console.log(`Shutting down the server for ${err.message}`);

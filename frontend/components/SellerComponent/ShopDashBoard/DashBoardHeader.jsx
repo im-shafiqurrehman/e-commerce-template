@@ -29,19 +29,19 @@ function DashBoardHeader() {
         </div>
         {/* dashboard navbar icons */}
         <div className="flex items-center gap-10">
-          <Link href="/dashboard/coupons" className="hidden md:block">
+          <Link href="/dashboard-coupouns" className="hidden md:block">
             <AiOutlineGift size={30} color="#555" />
           </Link>
-          <Link href="/dashboard/events" className="hidden md:block">
+          <Link href="/dashboard-events" className="hidden md:block">
             <MdOutlineLocalOffer size={30} color="#555" />
           </Link>
-          <Link href="/dashboard/products" className="hidden md:block">
+          <Link href="/dashboard-products" className="hidden md:block">
             <FiShoppingBag size={30} color="#555" />
           </Link>
-          <Link href="/dashboard/orders" className="hidden md:block">
+          <Link href="/dashboard-orders" className="hidden md:block">
             <FiPackage size={30} color="#555" />
           </Link>
-          <Link href="/dashboard/messages" className="hidden md:block">
+          <Link href="/dashboard-messages" className="hidden md:block">
             <BiMessageSquareDetail size={30} color="#555" />
           </Link>
           <Link href={`/shop/${seller._id}`}>

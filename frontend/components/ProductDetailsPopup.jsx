@@ -111,7 +111,7 @@ function ProductDetailsPopup({ setOpen, data }) {
                 </div>
                 {/* send message button */}
                 <button
-                  className="my-3 flex items-center gap-2 rounded-md bg-black px-5 py-3 text-white"
+                  className="my-3 flex items-center gap-2 hover:cursor-pointer rounded-md bg-black px-5 py-3 text-white"
                   onClick={() => console.log("Message sent")}
                 >
                   Send Message <AiOutlineMessage size={22} />

@@ -7,7 +7,7 @@ import ErrorHandler from "../utils/ErrorHandler.js";
 export const createEvent = catchAsyncErrors(async (req, res, next) => {
   try {
     const { shopId } = req.body;
-    console.log("Received Shop ID:", shopId);
+    // console.log("Received Shop ID:", shopId);
     const shop = await shopModel.findById(shopId);
 
     if (!shop) {
@@ -23,7 +23,7 @@ export const createEvent = catchAsyncErrors(async (req, res, next) => {
       shop: shop._id,
     };
 
-    console.log(eventData);
+    // console.log(eventData);
 
     const event = await eventModel.create(eventData);
 

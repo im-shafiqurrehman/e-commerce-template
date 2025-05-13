@@ -31,10 +31,10 @@ function EventCard({ data }) {
         <div className="flex justify-between py-2">
           <div className="flex items-center">
             <h5 className="pr-3 text-lg font-medium text-[#d55b45] line-through">
-              {data?.originalPrice ? `${data.originalPrice}$` : ""}
+              {data?.originalPrice ? `${data.originalPrice}PKR ` : ""}
             </h5>
             <h5 className="pr-3 text-[20px] font-bold text-[#333]">
-              {data?.discountPrice ? `${data.discountPrice}$` : data?.originalPrice ? `${data.originalPrice}$` : "0$"}
+              {data?.discountPrice ? `${data.discountPrice}PKR` : data?.originalPrice ? `${data.originalPrice}PKR` : "0 PKR"}
             </h5>
           </div>
           <div className="pr-3 text-[17px] font-normal text-[#44a55e]">

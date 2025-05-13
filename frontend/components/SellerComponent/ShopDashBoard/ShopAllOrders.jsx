@@ -67,10 +67,10 @@ function ShopAllOrders() {
   const rows =
     orders?.map((item) => ({
       id: item._id,
-      itemsQty: item.cart.length,
+      itemsQty: item.cart.reduce((sum, cartItem) => sum + (cartItem.qty || 1), 0),
       total: "PKR " + item.totalPrice,
       status: item.status,
-    })) || [];
+    })) || []
 
   return isLoading ? (
     <Loader />

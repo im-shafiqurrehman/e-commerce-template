@@ -168,7 +168,7 @@ function UserOrderDetails() {
       <br />
 
       <Link href="#">
-        <button className="rounded-md bg-indigo-800 px-5 py-2.5 text-white">
+        <button className="rounded-md bg-indigo-800 px-5 hover:cursor-pointer py-2.5 text-white">
           Send Message
         </button>
       </Link>

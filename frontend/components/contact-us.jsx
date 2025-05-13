@@ -144,9 +144,7 @@
         title: "Address",
         content: (
           <p>
-            Half Attire <br />
-            49A ferozpark phase 1, <br />
-            town, Lahore, Pakistan
+            Half Attire <br /> Lahore, Pakistan
           </p>
         ),
       },
@@ -185,7 +183,7 @@
       {
         icon: MessageCircle,
         title: "Business Hours",
-        content: "Monday to Saturday: 10am - 6pm",
+        content: "24/7",
       },
     ];
 
@@ -323,7 +321,7 @@
                           </>
                         ) : (
                           <>
-                            <Send className="h-4 w-4 mr-2" />
+                            <Send className="h-4 w-4 mr-2 hover:cursor-pointer" />
                             Send Message
                           </>
                         )}

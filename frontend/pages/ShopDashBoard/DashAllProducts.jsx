@@ -7,11 +7,9 @@ function DashAllProducts() {
     <div>
       <DashBoardHeader />
       <div className="flex">
-        {/* sidebar */}
         <div>
           <DashSidebar active={3} />
         </div>
-        {/* create product */}
         <div className="w-full max-w-[950px] flex-1">
           <ShopAllProducts />
         </div>

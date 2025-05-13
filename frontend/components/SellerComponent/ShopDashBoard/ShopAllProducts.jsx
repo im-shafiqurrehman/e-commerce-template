@@ -81,7 +81,7 @@ function ShopAllProducts() {
       headerAlign: "center",
       renderCell: (params) => {
         return (
-          <Link href={`/product/${encodeURIComponent(params.row.name)}`}>
+          <Link href={`/product/${encodeURIComponent(params.row.id)}`}>
             <Button>
               <AiOutlineEye size={20} />
             </Button>

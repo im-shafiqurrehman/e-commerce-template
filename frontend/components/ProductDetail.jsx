@@ -240,7 +240,7 @@ function ProductDetail({ data }) {
                   </div>
                   {/* send message button */}
                   <button
-                    className="my-3 flex items-center gap-2 rounded-md bg-indigo-800 px-5 py-3 text-white"
+                    className="my-3 flex items-center gap-2 hover:cursor-pointer rounded-md bg-indigo-800 px-5 py-3 text-white"
                     onClick={handleMessageSubmit}
                   >
                     Send Message <AiOutlineMessage size={22} />

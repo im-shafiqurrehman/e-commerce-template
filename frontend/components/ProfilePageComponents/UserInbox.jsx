@@ -225,9 +225,8 @@ const MessageList = ({
 
   return (
     <div
-      className={`w-full flex p-3 px-3 ${
-        active === index ? "bg-[#00000010]" : "bg-transparent"
-      }  cursor-pointer`}
+      className={`w-full flex p-3 px-3 ${active === index ? "bg-[#00000010]" : "bg-transparent"
+        }  cursor-pointer`}
       onClick={(e) => {
         setActive(index);
         handleClick(data._id);
@@ -273,6 +272,8 @@ const SellerInbox = ({
   scrollRef,
 }) => {
   return (
+
+
     <div className="w-[full] min-h-full flex flex-col justify-between p-5">
       <div className="w-full flex p-3 items-center justify-between bg-slate-200">
         <div className="flex">
@@ -293,14 +294,34 @@ const SellerInbox = ({
         />
       </div>
 
+
+{/* Message */}
+
       <div className="px-3 h-[75vh] py-3 overflow-y-scroll">
+
+        {/* <div className="flex items-center gap-2">
+          <Image
+            src={
+              userData?.avatar
+                ? `${backend_url}${userData.avatar}`
+                : "/assets/fallback-avatar.png"
+            }
+            alt="User Avatar"
+            className="h-12 w-12 rounded-full"
+            width={48}
+            height={48}
+          />
+          <div className="h-max w-max rounded bg-green-500 px-3 py-2 text-white">
+            Hello there!  How can I help you?
+          </div>
+        </div> */}
+
         {messages &&
           messages.map((item, index) => (
             <div
               key={index}
-              className={`flex w-full my-2 ${
-                item.sender === sellerId ? "justify-end" : "justify-start"
-              }`}
+              className={`flex w-full my-2 ${item.sender === sellerId ? "justify-end" : "justify-start"
+                }`}
               ref={scrollRef}
             >
               {item.sender !== sellerId && (
@@ -314,9 +335,8 @@ const SellerInbox = ({
               {item.text !== "" && (
                 <div>
                   <div
-                    className={`w-max p-2 rounded ${
-                      item.sender === sellerId ? "bg-[#000]" : "bg-[#38c776]"
-                    } text-[#fff] h-min`}
+                    className={`w-max p-2 rounded ${item.sender === sellerId ? "bg-[#000]" : "bg-[#38c776]"
+                      } text-[#fff] h-min`}
                   >
                     <p>{item.text}</p>
                   </div>
@@ -334,12 +354,12 @@ const SellerInbox = ({
         className="p-3 relative w-full flex justify-between items-center"
         onSubmit={sendMessageHandler}
       >
-        <div className="w-[30px]">
+        {/* <div className="w-[30px]">
           <input type="file" name="" id="image" className="hidden" />
           <label htmlFor="image">
             <TfiGallery className="cursor-pointer" size={20} />
           </label>
-        </div>
+        </div> */}
         <div className="w-full">
           <input
             type="text"

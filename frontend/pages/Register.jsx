@@ -1,55 +1,104 @@
-import { useEffect, useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { RxAvatar } from "react-icons/rx";
-import axios from "axios";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { server } from "@/lib/server";
-import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
-import { FaArrowLeftLong } from "react-icons/fa6";
+"use client"
 
+import { useEffect, useState } from "react"
+import { FaEye, FaEyeSlash } from "react-icons/fa"
+import { RxAvatar } from "react-icons/rx"
+import { FcGoogle } from "react-icons/fc"
+import axios from "axios"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { server } from "@/lib/server"
+import { toast } from "react-toastify"
+import { useSelector, useDispatch } from "react-redux"
+import { FaArrowLeftLong } from "react-icons/fa6"
+import { signInWithPopup } from "firebase/auth"
+import { auth, googleProvider } from "@/lib/firebase"
+import { loadUserSuccess } from "@/redux/reducers/user"
+import Cookies from "js-cookie"
 
 function Register() {
-  const { isAuthenticated } = useSelector((state) => state.user);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [avatar, setAvatar] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState(null);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch()
+  const { isAuthenticated } = useSelector((state) => state.user)
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [avatar, setAvatar] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState(null)
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/");
+      router.push("/")
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router])
+
+  // Google Sign-In Function
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider)
+      const user = result.user
+      const idToken = await user.getIdToken()
+
+      // Use local default avatar
+      const defaultAvatar = "/assets/user.png"
+
+      const userData = {
+        _id: user.uid,
+        name: user.displayName || user.email?.split("@")[0] || "User",
+        email: user.email,
+        avatar: user.photoURL || defaultAvatar,
+        role: "user",
+        addresses: [],
+        phoneNumber: null,
+        createdAt: new Date().toISOString(),
+      }
+
+      // Store token and user data (using "token" as key)
+      localStorage.setItem("token", idToken)
+      localStorage.setItem("userData", JSON.stringify(userData))
+      Cookies.set("token", idToken, { expires: 7 })
+      Cookies.set("userData", JSON.stringify(userData), { expires: 7 })
+
+      // Update Redux state
+      dispatch(loadUserSuccess(userData))
+
+      toast.success("Successfully registered with Google!")
+      router.push("/")
+    } catch (error) {
+      if (error.code === "auth/popup-closed-by-user") {
+        toast.info("Sign-in cancelled")
+      } else {
+        toast.error("Google sign-in failed")
+      }
+      console.error(error)
+    }
+  }
 
   const handleFileInputChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     if (file) {
-      setAvatar(file);
-      setAvatarPreview(URL.createObjectURL(file));
+      setAvatar(file)
+      setAvatarPreview(URL.createObjectURL(file))
     }
-  };
+  }
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+    setPasswordVisible(!passwordVisible)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true); // Set loading to true when submission starts
+    e.preventDefault()
+    setLoading(true)
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("password", password);
+    const formData = new FormData()
+    formData.append("name", name)
+    formData.append("email", email)
+    formData.append("password", password)
     if (avatar) {
-      formData.append("file", avatar);
+      formData.append("file", avatar)
     }
 
     try {
@@ -57,31 +106,27 @@ function Register() {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      };
+      }
 
-      const response = await axios.post(
-        `${server}/user/create-user`,
-        formData,
-        config,
-      );
+      const response = await axios.post(`${server}/user/create-user`, formData, config)
 
       if (response.data.success) {
-        toast.success(response.data.message);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAvatar(null);
-        setAvatarPreview(null);
-        router.push("/login");
+        toast.success(response.data.message)
+        setName("")
+        setEmail("")
+        setPassword("")
+        setAvatar(null)
+        setAvatarPreview(null)
+        router.push("/login")
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.message)
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "An error occurred");
+      toast.error(error.response?.data?.message || "An error occurred")
     } finally {
-      setLoading(false); // Reset loading state after submission completes
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div>
@@ -97,16 +142,27 @@ function Register() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Create an account
               </h1>
-              <form
-                onSubmit={handleSubmit}
-                className="space-y-4 md:space-y-6"
-                action="#"
+
+              {/* Google Sign-Up Button - Matching form style */}
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="w-full flex items-center justify-center px-5 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 transition-colors cursor-pointer"
               >
+                <FcGoogle className="h-5 w-5 mr-2" />
+                Continue with Google
+              </button>
+
+              {/* Divider */}
+              <div className="flex items-center">
+                <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+                <div className="px-3 text-gray-500 text-sm dark:text-gray-400">or</div>
+                <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6" action="#">
                 <div>
-                  <label
-                    htmlFor="name"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
                     Username
                   </label>
                   <input
@@ -118,14 +174,11 @@ function Register() {
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     placeholder="Username"
                     required
-                    disabled={loading} // Disable input during loading
+                    disabled={loading}
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
                     Your email
                   </label>
                   <input
@@ -137,14 +190,11 @@ function Register() {
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     placeholder="name@company.com"
                     required
-                    disabled={loading} // Disable input during loading
+                    disabled={loading}
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
                     Password
                   </label>
                   <div className="relative">
@@ -156,20 +206,16 @@ function Register() {
                       onChange={(e) => setPassword(e.target.value)}
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                       required
-                      disabled={loading} // Disable input during loading
+                      disabled={loading}
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5">
                       <button
                         type="button"
                         onClick={togglePasswordVisibility}
                         className="focus:outline-none"
-                        disabled={loading} // Disable button during loading
+                        disabled={loading}
                       >
-                        {passwordVisible ? (
-                          <FaEyeSlash size={18} />
-                        ) : (
-                          <FaEye size={18} />
-                        )}
+                        {passwordVisible ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                       </button>
                     </div>
                   </div>
@@ -180,7 +226,7 @@ function Register() {
                     <span className="inline-block h-8 w-8 overflow-hidden rounded-full">
                       {avatarPreview ? (
                         <img
-                          src={avatarPreview}
+                          src={avatarPreview || "/placeholder.svg"}
                           alt="avatar"
                           className="h-full w-full rounded-full object-cover"
                         />
@@ -190,7 +236,7 @@ function Register() {
                     </span>
                     <label
                       htmlFor="file-input"
-                      className="ml-3 flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                      className="ml-3 flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 cursor-pointer"
                     >
                       <span>Upload a file</span>
                       <input
@@ -200,7 +246,7 @@ function Register() {
                         accept=".jpg,.jpeg,.png"
                         onChange={handleFileInputChange}
                         className="sr-only"
-                        disabled={loading} // Disable file input during loading
+                        disabled={loading}
                       />
                     </label>
                   </div>
@@ -208,8 +254,8 @@ function Register() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center"
-                  disabled={loading} // Disable button during loading
+                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center cursor-pointer"
+                  disabled={loading}
                 >
                   {loading ? (
                     <>
@@ -241,10 +287,7 @@ function Register() {
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Already have an account?{" "}
-                  <Link
-                    href="/login"
-                    className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-                  >
+                  <Link href="/login" className="font-medium text-blue-600 hover:underline dark:text-blue-500">
                     Sign in
                   </Link>
                 </p>
@@ -254,7 +297,7 @@ function Register() {
         </div>
       </section>
     </div>
-  );
+  )
 }
 
-export default Register;
+export default Register

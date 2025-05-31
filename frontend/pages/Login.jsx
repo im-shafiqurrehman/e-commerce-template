@@ -1,80 +1,139 @@
-"use client";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { server } from "@/lib/server";
-import { toast } from "react-toastify";
-import { useSelector, useDispatch } from "react-redux"; // Added useDispatch
-import { FaArrowLeftLong } from "react-icons/fa6";
-import { loadUserSuccess } from "@/redux/reducers/user"; // Added loadUserSuccess (adjust based on your Redux setup)
+"use client"
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { FaEye, FaEyeSlash } from "react-icons/fa"
+import { FcGoogle } from "react-icons/fc"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { server } from "@/lib/server"
+import { toast } from "react-toastify"
+import { useSelector, useDispatch } from "react-redux"
+import { FaArrowLeftLong } from "react-icons/fa6"
+import { loadUserSuccess } from "@/redux/reducers/user"
+import { signInWithPopup } from "firebase/auth"
+import { auth, googleProvider } from "@/lib/firebase"
+import Cookies from "js-cookie"
 
 function Login() {
-  const dispatch = useDispatch(); // Added for dispatching Redux actions
-  const { isAuthenticated } = useSelector((state) => state.user);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const router = useRouter();
+  const dispatch = useDispatch()
+  const { isAuthenticated } = useSelector((state) => state.user)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem("rememberedEmail");
-    const savedPassword = localStorage.getItem("rememberedPassword");
-    if (savedEmail && savedPassword) {
-      setEmail(savedEmail);
-      setPassword(savedPassword);
-      setRememberMe(true);
+    // Check for existing Google auth token
+    const token = localStorage.getItem("token") || Cookies.get("token")
+    const userData = localStorage.getItem("userData") || Cookies.get("userData")
+
+    if (token && userData) {
+      try {
+        const parsedUserData = JSON.parse(userData)
+        dispatch(loadUserSuccess(parsedUserData))
+        router.push("/")
+        return
+      } catch (error) {
+        // Clear invalid data
+        localStorage.removeItem("token")
+        localStorage.removeItem("userData")
+        Cookies.remove("token")
+        Cookies.remove("userData")
+      }
     }
-  }, []);
+
+    const savedEmail = localStorage.getItem("rememberedEmail")
+    const savedPassword = localStorage.getItem("rememberedPassword")
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail)
+      setPassword(savedPassword)
+      setRememberMe(true)
+    }
+  }, [dispatch, router])
 
   // Redirect if authenticated
   if (isAuthenticated) {
-    router.push("/");
-    return null; // Prevent rendering the form
+    router.push("/")
+    return null
+  }
+
+  // Google Sign-In Function
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider)
+      const user = result.user
+      const idToken = await user.getIdToken()
+
+      // Use local default avatar
+      const defaultAvatar = "/assets/user.png"
+
+      const userData = {
+        _id: user.uid,
+        name: user.displayName || user.email?.split("@")[0] || "User",
+        email: user.email,
+        avatar: user.photoURL || defaultAvatar,
+        role: "user",
+        addresses: [],
+        phoneNumber: null,
+        createdAt: new Date().toISOString(),
+      }
+
+      // Store token and user data (using "token" as key)
+      localStorage.setItem("token", idToken)
+      localStorage.setItem("userData", JSON.stringify(userData))
+      Cookies.set("token", idToken, { expires: 7 })
+      Cookies.set("userData", JSON.stringify(userData), { expires: 7 })
+
+      // Update Redux state
+      dispatch(loadUserSuccess(userData))
+
+      toast.success("Successfully signed in with Google!")
+      router.push("/")
+    } catch (error) {
+      if (error.code === "auth/popup-closed-by-user") {
+        toast.info("Sign-in cancelled")
+      } else {
+        toast.error("Google sign-in failed")
+      }
+      console.error(error)
+    }
   }
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+    setPasswordVisible(!passwordVisible)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
     try {
-      const res = await axios.post(
-        `${server}/user/login`,
-        { email, password, rememberMe },
-        { withCredentials: true },
-      );
+      const res = await axios.post(`${server}/user/login`, { email, password, rememberMe }, { withCredentials: true })
       if (res.data.success) {
-        // Update Redux state with user data
-        dispatch(loadUserSuccess(res.data.user)); // Adjust based on your Redux action
-        // Handle "Remember Me" storage
+        dispatch(loadUserSuccess(res.data.user))
         if (rememberMe) {
-          localStorage.setItem("rememberedEmail", email);
-          localStorage.setItem("rememberedPassword", password);
+          localStorage.setItem("rememberedEmail", email)
+          localStorage.setItem("rememberedPassword", password)
         } else {
-          localStorage.removeItem("rememberedEmail");
-          localStorage.removeItem("rememberedPassword");
+          localStorage.removeItem("rememberedEmail")
+          localStorage.removeItem("rememberedPassword")
         }
-        toast.success("User successfully logged in");
-        router.push("/"); // Navigate without reload
+        toast.success("User successfully logged in")
+        router.push("/")
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.message)
       } else {
-        toast.error("An error occurred. Please try again.");
+        toast.error("An error occurred. Please try again.")
       }
-      console.log(error);
+      console.log(error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div>
@@ -90,16 +149,27 @@ function Login() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Sign in to your account
               </h1>
-              <form
-                onSubmit={handleSubmit}
-                className="space-y-4 md:space-y-6"
-                action="#"
+
+              {/* Google Sign-In Button - Matching form style */}
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="w-full flex items-center justify-center px-5 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 transition-colors cursor-pointer"
               >
+                <FcGoogle className="h-5 w-5 mr-2" />
+                Continue with Google
+              </button>
+
+              {/* Divider */}
+              <div className="flex items-center">
+                <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+                <div className="px-3 text-gray-500 text-sm dark:text-gray-400">or</div>
+                <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6" action="#">
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
                     Your email
                   </label>
                   <input
@@ -115,10 +185,7 @@ function Login() {
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
                     Password
                   </label>
                   <div className="relative">
@@ -139,11 +206,7 @@ function Login() {
                         className="focus:outline-none"
                         disabled={loading}
                       >
-                        {passwordVisible ? (
-                          <FaEyeSlash size={18} />
-                        ) : (
-                          <FaEye size={18} />
-                        )}
+                        {passwordVisible ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                       </button>
                     </div>
                   </div>
@@ -162,10 +225,7 @@ function Login() {
                       />
                     </div>
                     <div className="ml-3 text-sm">
-                      <label
-                        htmlFor="remember"
-                        className="text-gray-500 dark:text-gray-300"
-                      >
+                      <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">
                         Remember me
                       </label>
                     </div>
@@ -173,7 +233,7 @@ function Login() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center"
+                  className="w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center cursor-pointer"
                   disabled={loading}
                 >
                   {loading ? (
@@ -205,11 +265,8 @@ function Login() {
                   )}
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  Don’t have an account yet?{" "}
-                  <Link
-                    href="/register"
-                    className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-                  >
+                  Don't have an account yet?{" "}
+                  <Link href="/register" className="font-medium text-blue-600 hover:underline dark:text-blue-500">
                     Sign up
                   </Link>
                 </p>
@@ -219,7 +276,7 @@ function Login() {
         </div>
       </section>
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login

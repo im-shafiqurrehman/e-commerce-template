@@ -336,3 +336,40 @@ export const sendContactForm = async (req, res) => {
     res.status(500).json({ success: false, message: error.message || "Failed to send email" });
   }
 };
+
+
+// Admin functionality
+
+// Get all users (Admin)
+export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const users = await userModel.find().sort({
+      createdAt: -1,
+    });
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+// Delete user (Admin)
+export const deleteUser = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const user = await userModel.findById(req.params.id);
+    if (!user) {
+      return next(
+        new ErrorHandler(`User is not available with this ${req.params.id}!`, 400)
+      );
+    }
+    await userModel.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: "User Deleted Successfully!",
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});

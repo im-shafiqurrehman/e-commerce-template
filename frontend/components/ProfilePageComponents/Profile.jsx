@@ -5,8 +5,8 @@ import { backend_url, server } from "../../lib/server"
 import { AiOutlineCamera } from "react-icons/ai"
 import { FaUserCircle } from "react-icons/fa"
 import { useState, useEffect } from "react"
-import Loader from "../Loader"
-import { loadUser, updateUserInfomation } from "../../redux/actions/user"
+import Loader from "../Loader";
+import { loadUser } from "../../redux/actions/user"
 import { toast } from "react-toastify"
 import axios from "axios"
 
@@ -54,6 +54,11 @@ function Profile() {
             phoneNumber,
           },
         })
+
+        // Update localStorage as well
+        const userData = JSON.parse(localStorage.getItem("userData") || "{}")
+        const updatedUserData = { ...userData, name, phoneNumber }
+        localStorage.setItem("userData", JSON.stringify(updatedUserData))
       }
     } catch (err) {
       console.error("Profile update error:", err)
@@ -96,6 +101,11 @@ function Profile() {
               avatar: res.data.user.avatar,
             },
           })
+
+          // Update localStorage as well
+          const userData = JSON.parse(localStorage.getItem("userData") || "{}")
+          const updatedUserData = { ...userData, avatar: res.data.user.avatar }
+          localStorage.setItem("userData", JSON.stringify(updatedUserData))
         } else {
           // Fallback to loadUser only if necessary
           dispatch(loadUser())
@@ -110,13 +120,26 @@ function Profile() {
     return <Loader />
   }
 
+  // Helper function to get avatar URL
+  const getAvatarUrl = () => {
+    if (user.avatar) {
+      // If avatar is a URL (from Google), use it directly
+      if (user.avatar.startsWith("http")) {
+        return user.avatar
+      }
+      // If avatar is a filename, use backend URL
+      return `${backend_url}/${user.avatar}`
+    }
+    return null
+  }
+
   return (
     <div className="bg-gray-100 rounded-lg shadow-sm p-6">
       <div className="flex w-full justify-center mb-8">
         <div className="relative">
-          {user.avatar ? (
+          {getAvatarUrl() ? (
             <img
-              src={`${backend_url}/${user.avatar}`}
+              src={getAvatarUrl() || "/placeholder.svg"}
               className="h-32 w-32 rounded-full border-4 border-blue-600 object-cover object-top"
               alt="User avatar"
             />
@@ -164,7 +187,6 @@ function Profile() {
               <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
             </div>
 
-
             {/* Second row */}
             <div className="w-full">
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
@@ -197,4 +219,3 @@ function Profile() {
 }
 
 export default Profile
-

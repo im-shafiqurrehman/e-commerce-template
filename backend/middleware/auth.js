@@ -34,6 +34,23 @@ export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
   next()
 })
 
+// Optional: Firebase token verification middleware
+export const verifyFirebaseToken = catchAsyncErrors(async (req, res, next) => {
+  const { idToken } = req.body
+
+  if (!idToken) {
+    return next(new ErrorHandler("Firebase token is required", 400))
+  }
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken)
+    req.firebaseUser = decodedToken
+    next()
+  } catch (error) {
+    return next(new ErrorHandler("Invalid Firebase token", 401))
+  }
+})
+
 
 
 export const isAdmin = catchAsyncErrors(async (req, res, next) => {

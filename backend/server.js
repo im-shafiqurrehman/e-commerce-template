@@ -23,12 +23,22 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
+// CORS configuration - UPDATED
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     credentials: true,
-  })
-);
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+)
+
+// Add headers to fix COOP issues
+app.use((req, res, next) => {
+  res.header("Cross-Origin-Opener-Policy", "same-origin-allow-popups")
+  res.header("Cross-Origin-Embedder-Policy", "require-corp")
+  next()
+})
 
 app.use(express.json());
 app.use(cookieParser());

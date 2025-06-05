@@ -7,6 +7,92 @@ import sendToken from "../utils/jwtToken.js";
 import fs from "fs";
 import path from "path";
 
+// Google authentication handler - FIXED
+export const googleAuth = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { name, email, photo } = req.body
+
+    console.log("Google auth request received:", { name, email, photo })
+
+    // Validate required fields
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      })
+    }
+
+    // Check if user already exists
+    const user = await userModel.findOne({ email })
+
+    if (user) {
+      console.log("Existing user found:", user._id)
+
+      // Generate token using the model method
+      const token = user.getJwtToken()
+
+      // Set token in cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
+
+      // Return user data (excluding password)
+      const { password, ...userData } = user.toObject()
+
+      return res.status(200).json({
+        success: true,
+        user: userData,
+        message: "Login successful",
+      })
+    } else {
+      console.log("Creating new user for:", email)
+
+      // Create new user
+      const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)
+
+      const newUser = new userModel({
+        name: name || email.split("@")[0],
+        email,
+        password: generatedPassword, // Will be hashed by pre-save hook
+        avatar: photo || "/assets/user.png",
+        role: "user",
+      })
+
+      await newUser.save()
+      console.log("New user created with ID:", newUser._id)
+
+      // Generate token using the model method
+      const token = newUser.getJwtToken()
+
+      // Set token in cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
+
+      // Return user data (excluding password)
+      const { password, ...userData } = newUser.toObject()
+
+      return res.status(201).json({
+        success: true,
+        user: userData,
+        message: "Registration successful",
+      })
+    }
+  } catch (error) {
+    console.error("Google auth error:", error)
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    })
+  }
+})
+
 // register user
 export const createUser = async (req, res, next) => {
   try {
@@ -53,6 +139,11 @@ export const createUser = async (req, res, next) => {
     next(new ErrorHandler("Error creating user", 400));
   }
 };
+
+
+
+
+
 
 // create activationtoken
 const createActivationToken = (user) => {

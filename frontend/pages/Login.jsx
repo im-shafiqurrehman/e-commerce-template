@@ -5,14 +5,13 @@ import { FaEye, FaEyeSlash } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { server } from "@/lib/server"
+import { server } from "../lib/server"
 import { toast } from "react-toastify"
 import { useSelector, useDispatch } from "react-redux"
 import { FaArrowLeftLong } from "react-icons/fa6"
-import { loadUserSuccess } from "@/redux/reducers/user"
+import { loadUserSuccess } from "../redux/reducers/user"
 import { signInWithPopup } from "firebase/auth"
-import { auth, googleProvider } from "@/lib/firebase"
-import Cookies from "js-cookie"
+import { auth, googleProvider } from "../lib/firebase"
 
 function Login() {
   const dispatch = useDispatch()
@@ -21,26 +20,20 @@ function Login() {
   const [password, setPassword] = useState("")
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    // Check for existing Google auth token
-    const token = localStorage.getItem("token") || Cookies.get("token")
-    const userData = localStorage.getItem("userData") || Cookies.get("userData")
+    // Check for existing user data
+    const userData = localStorage.getItem("userData")
 
-    if (token && userData) {
+    if (userData) {
       try {
         const parsedUserData = JSON.parse(userData)
         dispatch(loadUserSuccess(parsedUserData))
-        router.push("/")
-        return
       } catch (error) {
-        // Clear invalid data
-        localStorage.removeItem("token")
         localStorage.removeItem("userData")
-        Cookies.remove("token")
-        Cookies.remove("userData")
       }
     }
 
@@ -51,53 +44,60 @@ function Login() {
       setPassword(savedPassword)
       setRememberMe(true)
     }
-  }, [dispatch, router])
+  }, [dispatch])
 
-  // Redirect if authenticated
   if (isAuthenticated) {
     router.push("/")
     return null
   }
 
-  // Google Sign-In Function
-  const handleGoogleSignIn = async () => {
+  // Google Sign-In Function - FIXED
+  const handleGoogleClick = async () => {
     try {
+      setGoogleLoading(true)
+
+      // 1. Sign in with Firebase
       const result = await signInWithPopup(auth, googleProvider)
-      const user = result.user
-      const idToken = await user.getIdToken()
 
-      // Use local default avatar
-      const defaultAvatar = "/assets/user.png"
-
+      // 2. Get user data
       const userData = {
-        _id: user.uid,
-        name: user.displayName || user.email?.split("@")[0] || "User",
-        email: user.email,
-        avatar: user.photoURL || defaultAvatar,
-        role: "user",
-        addresses: [],
-        phoneNumber: null,
-        createdAt: new Date().toISOString(),
+        name: result.user.displayName,
+        email: result.user.email,
+        photo: result.user.photoURL,
       }
 
-      // Store token and user data (using "token" as key)
-      localStorage.setItem("token", idToken)
-      localStorage.setItem("userData", JSON.stringify(userData))
-      Cookies.set("token", idToken, { expires: 7 })
-      Cookies.set("userData", JSON.stringify(userData), { expires: 7 })
+      console.log("Firebase auth successful:", userData.email)
 
-      // Update Redux state
-      dispatch(loadUserSuccess(userData))
+      // 3. Send to backend
+      const res = await axios.post(`${server}/user/google`, userData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
 
-      toast.success("Successfully signed in with Google!")
-      router.push("/")
+      // 4. Handle response
+      if (res.data.success) {
+        // Store user data
+        localStorage.setItem("userData", JSON.stringify(res.data.user))
+        dispatch(loadUserSuccess(res.data.user))
+        toast.success("Successfully signed in with Google!")
+        router.push("/")
+      } else {
+        toast.error(res.data.message || "Authentication failed")
+      }
     } catch (error) {
+      console.error("Could not sign in with Google", error)
+
       if (error.code === "auth/popup-closed-by-user") {
         toast.info("Sign-in cancelled")
+      } else if (error.response) {
+        toast.error(error.response.data?.message || "Server error")
       } else {
         toast.error("Google sign-in failed")
       }
-      console.error(error)
+    } finally {
+      setGoogleLoading(false)
     }
   }
 
@@ -150,24 +150,47 @@ function Login() {
                 Sign in to your account
               </h1>
 
-              {/* Google Sign-In Button - Matching form style */}
               <button
+                onClick={handleGoogleClick}
                 type="button"
-                onClick={handleGoogleSignIn}
-                className="w-full flex items-center justify-center px-5 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 transition-colors cursor-pointer"
+                disabled={googleLoading}
+                className="w-full flex items-center justify-center px-5 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 transition-colors cursor-pointer disabled:opacity-70"
               >
-                <FcGoogle className="h-5 w-5 mr-2" />
-                Continue with Google
+                {googleLoading ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5 mr-2"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
+                    </svg>
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    <FcGoogle className="h-5 w-5 mr-2" />
+                    Continue with Google
+                  </>
+                )}
               </button>
 
-              {/* Divider */}
               <div className="flex items-center">
                 <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
                 <div className="px-3 text-gray-500 text-sm dark:text-gray-400">or</div>
                 <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6" action="#">
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                 <div>
                   <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
                     Your email
@@ -216,7 +239,6 @@ function Login() {
                     <div className="flex h-5 items-center">
                       <input
                         id="remember"
-                        aria-describedby="remember"
                         type="checkbox"
                         className="focus:ring-3 h-4 w-4 rounded border border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
                         disabled={loading}
@@ -239,7 +261,7 @@ function Login() {
                   {loading ? (
                     <>
                       <svg
-                        className="animate-spin h-5 w-5 mr-2 text-white"
+                        className="animate-spin h-5 w-5 mr-2"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"

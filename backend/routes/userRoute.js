@@ -12,6 +12,7 @@ import {
   updateUserPassword,
   getUserInfo,
   sendContactForm,
+  googleAuth,
 } from "../controller/userController.js";
 import multer from "multer";
 import { isAuthenticated } from "../middleware/auth.js";
@@ -49,5 +50,6 @@ userRouter.put("/update-user-password", isAuthenticated, updateUserPassword);
 userRouter.get("/user-info/:id", getUserInfo);
 
 userRouter.post("/send-email", sendContactForm);
+userRouter.post("/google", googleAuth);
 
 export default userRouter;

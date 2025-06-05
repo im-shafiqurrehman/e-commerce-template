@@ -35,15 +35,13 @@ function Register() {
     }
   }, [isAuthenticated, router])
 
-  // Google Sign-In Function - FIXED
+  // Google Sign-In Function
   const handleGoogleClick = async () => {
     try {
       setGoogleLoading(true)
 
-      // 1. Sign in with Firebase
       const result = await signInWithPopup(auth, googleProvider)
 
-      // 2. Get user data
       const userData = {
         name: result.user.displayName,
         email: result.user.email,
@@ -52,7 +50,6 @@ function Register() {
 
       console.log("Firebase auth successful:", userData.email)
 
-      // 3. Send to backend
       const res = await axios.post(`${server}/user/google`, userData, {
         withCredentials: true,
         headers: {
@@ -60,9 +57,7 @@ function Register() {
         },
       })
 
-      // 4. Handle response
       if (res.data.success) {
-        // Store user data
         localStorage.setItem("userData", JSON.stringify(res.data.user))
         dispatch(loadUserSuccess(res.data.user))
         toast.success("Successfully registered with Google!")
@@ -85,11 +80,38 @@ function Register() {
     }
   }
 
-  const handleFileInputChange = (e) => {
+  // Convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = (error) => reject(error)
+    })
+  }
+
+  const handleFileInputChange = async (e) => {
     const file = e.target.files[0]
     if (file) {
-      setAvatar(file)
-      setAvatarPreview(URL.createObjectURL(file))
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select an image file")
+        return
+      }
+
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB")
+        return
+      }
+
+      try {
+        const base64 = await convertToBase64(file)
+        setAvatar(base64)
+        setAvatarPreview(URL.createObjectURL(file))
+      } catch (error) {
+        toast.error("Failed to process image")
+      }
     }
   }
 
@@ -101,22 +123,13 @@ function Register() {
     e.preventDefault()
     setLoading(true)
 
-    const formData = new FormData()
-    formData.append("name", name)
-    formData.append("email", email)
-    formData.append("password", password)
-    if (avatar) {
-      formData.append("file", avatar)
-    }
-
     try {
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-
-      const response = await axios.post(`${server}/user/create-user`, formData, config)
+      const response = await axios.post(`${server}/user/create-user`, {
+        name,
+        email,
+        password,
+        avatar, // base64 string
+      })
 
       if (response.data.success) {
         toast.success(response.data.message)
@@ -274,7 +287,7 @@ function Register() {
                         type="file"
                         name="avatar"
                         id="file-input"
-                        accept=".jpg,.jpeg,.png"
+                        accept="image/*"
                         onChange={handleFileInputChange}
                         className="sr-only"
                         disabled={loading}

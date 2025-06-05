@@ -1,22 +1,35 @@
+
+
+
+// import { useDispatch, useSelector } from "react-redux"
+// import { backend_url, server } from "../../lib/server"
+// import { AiOutlineCamera } from "react-icons/ai"
+// import { FaUserCircle } from "react-icons/fa"
+// import { useState, useEffect } from "react"
+// import Loader from "../Loader";
+// import { loadUser } from "../../redux/actions/user"
+// import { toast } from "react-toastify"
+// import axios from "axios"
 "use client"
 
 import { useDispatch, useSelector } from "react-redux"
-import { backend_url, server } from "../../lib/server"
+import { backend_url } from "../../lib/server"
 import { AiOutlineCamera } from "react-icons/ai"
 import { FaUserCircle } from "react-icons/fa"
 import { useState, useEffect } from "react"
-import Loader from "../Loader";
-import { loadUser } from "../../redux/actions/user"
+import Loader from "../Loader"
+import { updateUserInfomation } from "../../redux/actions/user"
 import { toast } from "react-toastify"
 import axios from "axios"
+import { server } from "../../lib/server"
 
 function Profile() {
   const { user, loading } = useSelector((state) => state.user)
   const [name, setName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
-  const [avatar, setAvatar] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [updateSuccess, setUpdateSuccess] = useState(false)
+  const [avatarUploading, setAvatarUploading] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -33,86 +46,93 @@ function Profile() {
     setUpdateSuccess(false)
 
     try {
-      // Using axios directly to avoid page reload
-      const response = await axios.put(
-        `${server}/user/update-user-info`,
-        { name, phoneNumber },
-        { withCredentials: true },
-      )
+      console.log("Submitting profile update...")
 
-      if (response.data.success) {
-        // Update local state instead of reloading the user
+      // Use your existing Redux action
+      const result = await dispatch(updateUserInfomation(name, phoneNumber))
+
+      if (result && result.success !== false) {
         setUpdateSuccess(true)
         toast.success("Profile updated successfully")
-
-        // Update Redux state without full page reload
-        dispatch({
-          type: "UPDATE_USER_SUCCESS",
-          payload: {
-            ...user,
-            name,
-            phoneNumber,
-          },
-        })
-
-        // Update localStorage as well
-        const userData = JSON.parse(localStorage.getItem("userData") || "{}")
-        const updatedUserData = { ...userData, name, phoneNumber }
-        localStorage.setItem("userData", JSON.stringify(updatedUserData))
+      } else {
+        toast.error(result?.error || "Failed to update profile")
       }
     } catch (err) {
       console.error("Profile update error:", err)
-      toast.error(err.response?.data?.message || "Failed to update profile")
+      toast.error("Failed to update profile")
     } finally {
       setIsSubmitting(false)
 
-      // Reset success message after 3 seconds
       if (updateSuccess) {
         setTimeout(() => setUpdateSuccess(false), 3000)
       }
     }
   }
 
+  // Convert file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = (error) => reject(error)
+    })
+  }
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
 
-    setAvatar(file)
-    const formData = new FormData()
-    formData.append("file", file)
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file")
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB")
+      return
+    }
+
+    setAvatarUploading(true)
 
     try {
-      const res = await axios.put(`${server}/user/update-avatar`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+      const base64 = await convertToBase64(file)
+
+      const res = await axios.put(
+        `${server}/user/update-avatar`,
+        { avatar: base64 },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
         },
-        withCredentials: true,
-      })
+      )
 
       if (res.data.success) {
         toast.success("Avatar updated successfully")
 
-        // Update avatar in Redux without full page reload
+        // Update Redux state
         if (res.data.user && res.data.user.avatar) {
           dispatch({
-            type: "UPDATE_AVATAR_SUCCESS",
+            type: "UpdateAvatarSuccess",
             payload: {
               ...user,
               avatar: res.data.user.avatar,
             },
           })
 
-          // Update localStorage as well
+          // Update localStorage
           const userData = JSON.parse(localStorage.getItem("userData") || "{}")
           const updatedUserData = { ...userData, avatar: res.data.user.avatar }
           localStorage.setItem("userData", JSON.stringify(updatedUserData))
-        } else {
-          // Fallback to loadUser only if necessary
-          dispatch(loadUser())
         }
       }
     } catch (err) {
+      console.error("Avatar update error:", err)
       toast.error(err.response?.data?.message || "Failed to update avatar")
+    } finally {
+      setAvatarUploading(false)
     }
   }
 
@@ -123,14 +143,12 @@ function Profile() {
   // Helper function to get avatar URL
   const getAvatarUrl = () => {
     if (user.avatar) {
-      // If avatar is a URL (from Google), use it directly
       if (user.avatar.startsWith("http")) {
         return user.avatar
       }
-      // If avatar is a filename, use backend URL
       return `${backend_url}/${user.avatar}`
     }
-    return null
+    return "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
   }
 
   return (
@@ -142,6 +160,9 @@ function Profile() {
               src={getAvatarUrl() || "/placeholder.svg"}
               className="h-32 w-32 rounded-full border-4 border-blue-600 object-cover object-top"
               alt="User avatar"
+              onError={(e) => {
+                e.target.src = "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
+              }}
             />
           ) : (
             <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-blue-600 bg-gray-200 object-cover">
@@ -149,9 +170,20 @@ function Profile() {
             </div>
           )}
           <div className="absolute bottom-1.5 right-1.5 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors shadow-sm">
-            <input type="file" id="avatar" hidden onChange={handleImageChange} accept="image/*" />
+            <input
+              type="file"
+              id="avatar"
+              hidden
+              onChange={handleImageChange}
+              accept="image/*"
+              disabled={avatarUploading}
+            />
             <label htmlFor="avatar" className="cursor-pointer w-full h-full flex items-center justify-center">
-              <AiOutlineCamera size={18} />
+              {avatarUploading ? (
+                <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+              ) : (
+                <AiOutlineCamera size={18} />
+              )}
             </label>
           </div>
         </div>

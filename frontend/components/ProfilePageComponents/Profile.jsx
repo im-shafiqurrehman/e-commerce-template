@@ -6,10 +6,9 @@ import { AiOutlineCamera } from "react-icons/ai"
 import { FaUserCircle } from "react-icons/fa"
 import { useState, useEffect } from "react"
 import Loader from "../Loader"
-import { loadUser } from "../../redux/actions/user"
+import { loadUser, updateUserInfomation } from "../../redux/actions/user"
 import { toast } from "react-toastify"
 import axios from "axios"
-import Cookies from "js-cookie"
 
 function Profile() {
   const { user, loading } = useSelector((state) => state.user)
@@ -28,41 +27,17 @@ function Profile() {
     }
   }, [user])
 
-  // Simple function to get auth headers
-  const getAuthHeaders = () => {
-    // Check for Google auth token first
-    const googleToken = localStorage.getItem("token") || Cookies.get("token")
-
-    if (googleToken) {
-      return {
-        Authorization: `Bearer ${googleToken}`,
-        "Content-Type": "application/json",
-      }
-    }
-
-    // Default headers for traditional auth
-    return {
-      "Content-Type": "application/json",
-    }
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
     setUpdateSuccess(false)
 
     try {
-      // Get auth headers
-      const headers = getAuthHeaders()
-
       // Using axios directly to avoid page reload
       const response = await axios.put(
         `${server}/user/update-user-info`,
         { name, phoneNumber },
-        {
-          headers,
-          withCredentials: true,
-        },
+        { withCredentials: true },
       )
 
       if (response.data.success) {
@@ -102,20 +77,10 @@ function Profile() {
     formData.append("file", file)
 
     try {
-      // Get Google token if it exists
-      const googleToken = localStorage.getItem("token") || Cookies.get("token")
-
-      // Create headers with Authorization if Google token exists
-      const headers = {
-        "Content-Type": "multipart/form-data",
-      }
-
-      if (googleToken) {
-        headers.Authorization = `Bearer ${googleToken}`
-      }
-
       const res = await axios.put(`${server}/user/update-avatar`, formData, {
-        headers,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
         withCredentials: true,
       })
 
@@ -137,7 +102,6 @@ function Profile() {
         }
       }
     } catch (err) {
-      console.error("Avatar update error:", err)
       toast.error(err.response?.data?.message || "Failed to update avatar")
     }
   }
@@ -200,6 +164,7 @@ function Profile() {
               <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
             </div>
 
+
             {/* Second row */}
             <div className="w-full">
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
@@ -232,3 +197,4 @@ function Profile() {
 }
 
 export default Profile
+

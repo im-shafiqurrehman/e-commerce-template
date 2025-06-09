@@ -18,6 +18,7 @@ const nextConfig = {
       { protocol: "https", hostname: "hamart-shop.vercel.app", pathname: "**" },
       { protocol: "https", hostname: "via.placeholder.com", pathname: "**" },
       { protocol: "https", hostname: "i5.walmartimages.com", pathname: "**" },
+      { protocol: "https", hostname: "res.cloudinary.com", pathname: "**" },
       { protocol: "http", hostname: "localhost", port: "8000", pathname: "**" },
     ],
   },

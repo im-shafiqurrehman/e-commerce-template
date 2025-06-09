@@ -119,7 +119,7 @@ function Header() {
     <>
       <div className="container mx-auto px-4">
         {/* top navbar section */}
-        <div className="relative my-[20px] hidden h-[50px] items-center justify-between md:flex">
+        <div className="relative my-[20px] hidden h-[35px] items-center justify-between md:flex">
           <div>
             <Link href="/">
               <Image
@@ -127,7 +127,7 @@ function Header() {
                 alt="Logo"
                 width={100}
                 height={10}
-                className="w-[120px] md:w-[100px]"
+                className="w-[80px] md:w-[100px]"
               />
             </Link>
           </div>
@@ -199,7 +199,7 @@ function Header() {
           {/* mobile logo */}
           <div>
             <Link href="/">
-              <Image src={logo || "/placeholder.svg"} alt="Logo" width={80} height={60} className="w-[60px]" />
+              <Image src={logo || "/placeholder.svg"} alt="Logo" width={80} height={40} className="w-[60px]" />
             </Link>
           </div>
           {/* nav icons */}

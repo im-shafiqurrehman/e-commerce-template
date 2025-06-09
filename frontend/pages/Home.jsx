@@ -17,7 +17,7 @@ function Home() {
       <Bestdeals />
       <Events />
       <FeaturedProduct />
-      <Sponsored />
+      {/* <Sponsored /> */}
       {/* <NewsLetter /> */}
       <Footer />
     </div>

@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import Link from "next/link"
 
 function Hero() {
   const videoRef = useRef(null)
@@ -25,11 +24,11 @@ function Hero() {
   }, [])
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div className="relative h-[80vh] w-full overflow-hidden bg-black">
       {/* Full-screen background video */}
       <video
         ref={videoRef}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-contain sm:object-cover"
         autoPlay
         muted
         loop
@@ -39,9 +38,6 @@ function Hero() {
         <source src="/assets/video.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-
-      {/* Overlay gradient for better text visibility */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
 
       {/* Optional: Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">

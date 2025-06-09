@@ -1,21 +1,21 @@
-"use client";
+"use client"
 
-import { MdTrackChanges } from "react-icons/md";
-import Link from "next/link";
-import { DataGrid } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
-import { useEffect } from "react";
-import { getAllOrdersOfUser } from "../../redux/actions/order";
-import { useDispatch, useSelector } from "react-redux";
+import { MdTrackChanges } from "react-icons/md"
+import Link from "next/link"
+import { DataGrid } from "@mui/x-data-grid"
+import { Button } from "@mui/material"
+import { useEffect } from "react"
+import { getAllOrdersOfUser } from "../../redux/actions/order"
+import { useDispatch, useSelector } from "react-redux"
 
 function TrackOrders() {
-  const { user } = useSelector((state) => state.user);
-  const { orders } = useSelector((state) => state.orders);
-  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user)
+  const { orders } = useSelector((state) => state.orders)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
-  }, [dispatch, user._id]);
+    dispatch(getAllOrdersOfUser(user._id))
+  }, [dispatch, user._id])
 
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
@@ -25,7 +25,7 @@ function TrackOrders() {
       minWidth: 130,
       flex: 0.7,
       cellClassName: (params) => {
-        return params.row.status === "Delivered" ? "greenColor" : "redColor";
+        return params.row.status === "Delivered" ? "greenColor" : "redColor"
       },
     },
     {
@@ -56,19 +56,19 @@ function TrackOrders() {
               <MdTrackChanges size={20} />
             </Button>
           </Link>
-        );
+        )
       },
     },
-  ];
+  ]
 
   const rows = orders
     ? orders.map((item) => ({
         id: item._id,
-        itemsQty: item.cart.length,
+        itemsQty: item.cart.reduce((sum, cartItem) => sum + (cartItem.qty || 1), 0),
         total: "PKR " + item.totalPrice,
         status: item.status,
       }))
-    : [];
+    : []
 
   return (
     <div className="pl-6 pt-1 font-semibold">
@@ -87,7 +87,7 @@ function TrackOrders() {
         disableRowSelectionOnClick
       />
     </div>
-  );
+  )
 }
 
-export default TrackOrders;
+export default TrackOrders

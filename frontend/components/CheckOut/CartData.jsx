@@ -1,12 +1,16 @@
+"use client"
+
 /* eslint-disable no-unused-vars */
 
-function CartData({  handleSubmit,
-    totalPrice,
-    shipping,
-    subTotalPrice,
-    couponCode,
-    setCouponCode,
-    discountPercentenge}) {
+function CartData({
+  handleSubmit,
+  totalPrice,
+  shipping,
+  subTotalPrice,
+  couponCode,
+  setCouponCode,
+  discountPercentenge,
+}) {
   return (
     <div className="w-full rounded-md bg-white p-6 shadow-sm md:mt-4 md:w-2/5">
       <div className="space-y-4">
@@ -16,12 +20,15 @@ function CartData({  handleSubmit,
         </div>
         <div className="flex items-center justify-between gap-4">
           <p className="text-sm text-gray-600">shipping</p>
-          <p className="text-base font-semibold text-gray-600">PKR{shipping.toFixed(2)}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-base font-semibold text-gray-600">PKR{shipping.toFixed(2)}</p>
+            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">FREE</span>
+          </div>
         </div>
         <div className="flex items-center justify-between gap-4">
           <p className="text-sm text-gray-600">Discount</p>
           <p className="text-base font-semibold text-gray-600">
-          - {discountPercentenge ? "PKR" + discountPercentenge.toString() : null}   
+            {discountPercentenge ? "- PKR" + discountPercentenge.toFixed(2) : "- PKR0.00"}
           </p>
         </div>
         <hr />
@@ -43,7 +50,7 @@ function CartData({  handleSubmit,
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default CartData;
+export default CartData

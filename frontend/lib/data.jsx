@@ -22,6 +22,8 @@ export const navItems = [
   },
 ];
 
+
+
 // categories data
 export const categoriesData = [
   // {

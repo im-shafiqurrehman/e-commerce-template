@@ -38,3 +38,26 @@ export const getAllOrdersOfShop = (shopId) => async (dispatch) => {
     dispatch(getAllOrdersShopFailed(error.response.data.message));
   }
 };
+
+// NEW: Create order action
+export const createOrder = (orderData) => async (dispatch) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    }
+
+    const { data } = await axios.post(`${server}/order/create-order`, orderData, config)
+
+    // After creating order, refresh the orders list
+    if (orderData.user?._id) {
+      dispatch(getAllOrdersOfUser(orderData.user._id))
+    }
+
+    return data
+  } catch (error) {
+    throw error
+  }
+}

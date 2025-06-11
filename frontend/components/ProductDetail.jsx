@@ -374,7 +374,7 @@ function ProductDetail({ data }) {
 
                 {/* Keep existing shop info section unchanged */}
                 <div className="my-8 flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-6">
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <div className="relative h-12 w-12 rounded-full overflow-hidden">
                       <Image
                         src={shop?.avatar ? `${backend_url}/${shop.avatar}` : "/assets/placeholder.png"}
@@ -390,7 +390,7 @@ function ProductDetail({ data }) {
                       </Link>
                       <h5 className="text-[15px]">{averageRating} Ratings</h5>
                     </div>
-                  </div>
+                  </div> */}
                   <button
                     className="my-3 flex items-center gap-2 hover:cursor-pointer rounded-md bg-indigo-800 px-5 py-3 text-white"
                     onClick={handleMessageSubmit}

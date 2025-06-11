@@ -64,7 +64,7 @@ function ProductDetailInfo({ data }) {
               <div className="absolute bottom-[-27%] left-0 h-[3px] w-full bg-[crimson]"></div>
             )}
           </div>
-          <div className="relative">
+          {/* <div className="relative">
             <h5
               className={`cursor-pointer px-1 text-base font-semibold text-[#000] sm:text-lg md:text-[20px] ${
                 active === 3 ? "text-crimson" : ""
@@ -76,7 +76,7 @@ function ProductDetailInfo({ data }) {
             {active === 3 && (
               <div className="absolute bottom-[-27%] left-0 h-[3px] w-full bg-[crimson]"></div>
             )}
-          </div>
+          </div> */}
         </div>
 
         <div className="pt-4">

@@ -9,6 +9,8 @@ import {
   getShopInfo,
   updateShopAvatar,
   updateSellerInfo,
+  getAllSellers,
+  deleteSeller,
 } from "../controller/shopController.js"
 import { isAdmin, isSeller, isAuthenticated } from "../middleware/auth.js"
 
@@ -36,5 +38,9 @@ shopRouter.get("/logout", isSeller, logout)
 shopRouter.get("/get-shop-info/:id", getShopInfo)
 shopRouter.put("/update-shop-avatar", isSeller, upload.single("file"), updateShopAvatar)
 shopRouter.put("/update-seller-info", isSeller, updateSellerInfo)
+
+// Admin routes
+shopRouter.get("/admin-all-sellers", isAuthenticated, isAdmin, getAllSellers);
+shopRouter.delete("/admin-delete-seller/:id", isAuthenticated, isAdmin, deleteSeller);
 
 export default shopRouter

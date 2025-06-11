@@ -5,8 +5,9 @@ import {
   getAllShopEvents,
   deleteEvent,
   getAllEvents,
+  adminAllEvents,
 } from "../controller/eventController.js";
-import { isSeller } from "../middleware/auth.js";
+import { isAdmin, isAuthenticated, isSeller } from "../middleware/auth.js";
 
 const eventRouter = express.Router();
 
@@ -24,5 +25,6 @@ eventRouter.post("/create-event", upload.array("images"), createEvent);
 eventRouter.get("/get-all-shop-events/:id", getAllShopEvents);
 eventRouter.delete("/delete-shop-event/:id", isSeller, deleteEvent);
 eventRouter.get("/get-all-events/", getAllEvents);
-
+// Admin routes
+eventRouter.get("/admin-all-events", isAuthenticated, isAdmin, adminAllEvents);
 export default eventRouter;

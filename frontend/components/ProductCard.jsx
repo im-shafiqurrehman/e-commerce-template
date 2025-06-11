@@ -86,7 +86,7 @@ function ProductCard({ data, isEvent }) {
 
   return (
     <>
-      <div className="relative h-[370px] w-full cursor-pointer rounded-lg bg-white p-3 shadow-sm md:max-w-72">
+      <div className="relative h-[340px] w-full cursor-pointer rounded-lg bg-white p-3 shadow-sm md:max-w-72"> 
         <Link href={isEvent === true ? `/product/${data._id}?isEvent=true` : `/product/${data._id}`}>
           <Image
             src={
@@ -101,9 +101,9 @@ function ProductCard({ data, isEvent }) {
             unoptimized
           />
         </Link>
-        <Link href={`/shop/preview/${data?.shop._id}`}>
+        {/* <Link href={`/shop/preview/${data?.shop._id}`}>
           <h5 className="py-3 text-[15px] text-blue-400">{data.shop?.name || "Unknown Shop"}</h5>
-        </Link>
+        </Link> */}
         <Link href={`/product/${productId}`}>
           <h5 className="mb-2 line-clamp-2 font-medium">{data?.name}</h5>
         </Link>

@@ -81,3 +81,18 @@ export const getAllEvents = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler(error, 404));
   }
 });
+
+// Get all events (Admin)
+export const adminAllEvents = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const events = await eventModel.find().sort({
+      createdAt: -1,
+    });
+    res.status(200).json({
+      success: true,
+      events,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});

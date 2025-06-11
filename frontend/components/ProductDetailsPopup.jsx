@@ -152,7 +152,7 @@ function ProductDetailsPopup({ setOpen, data }) {
                 <div className="my-4 flex items-center justify-center">
                   <img src={`${backend_url}/${data.images[0]}`} className="w-60" alt={data.name} />
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <div>
                     <img
                       src={`${backend_url}/${data?.shop?.avatar}`}
@@ -166,7 +166,7 @@ function ProductDetailsPopup({ setOpen, data }) {
                     </Link>
                     <h5 className="text-[15px]">4/5 ratings</h5>
                   </div>
-                </div>
+                </div> */}
                 {/* send message button */}
                 <button
                   className="my-3 flex items-center gap-2 hover:cursor-pointer rounded-md bg-black px-5 py-3 text-white"

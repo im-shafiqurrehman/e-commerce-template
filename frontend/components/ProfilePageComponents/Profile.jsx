@@ -1,15 +1,4 @@
 
-
-
-// import { useDispatch, useSelector } from "react-redux"
-// import { backend_url, server } from "../../lib/server"
-// import { AiOutlineCamera } from "react-icons/ai"
-// import { FaUserCircle } from "react-icons/fa"
-// import { useState, useEffect } from "react"
-// import Loader from "../Loader";
-// import { loadUser } from "../../redux/actions/user"
-// import { toast } from "react-toastify"
-// import axios from "axios"
 "use client"
 
 import { useDispatch, useSelector } from "react-redux"

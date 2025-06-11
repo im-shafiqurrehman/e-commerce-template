@@ -288,3 +288,59 @@ export const updateSellerInfo = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler(error.message, 500));
   }
 });
+
+
+
+// Admibn Functionality
+
+// Get all sellers (Admin)
+export const getAllSellers = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const sellers = await shopModel.find().sort({
+      createdAt: -1,
+    });
+    res.status(200).json({
+      success: true,
+      sellers,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+// Delete seller (Admin)
+export const deleteSeller = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const seller = await shopModel.findById(req.params.id);
+    if (!seller) {
+      return next(
+        new ErrorHandler(`Seller not available with id: ${req.params.id}!`, 400)
+      );
+    }
+    await shopModel.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: "Seller deleted successfully!",
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+// Update seller payment methods
+export const updatePaymentMethods = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { withdrawMethod } = req.body;
+    const seller = await shopModel.findByIdAndUpdate(
+      req.seller._id,
+      { withdrawMethod },
+      { new: true }
+    );
+    res.status(201).json({
+      success: true,
+      seller,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});

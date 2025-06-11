@@ -10,9 +10,6 @@ import { cloudinary, isCloudinaryConfigured } from "../server.js"
 export const googleAuth = catchAsyncErrors(async (req, res, next) => {
   try {
     const { name, email, photo } = req.body
-
-    console.log("Google auth request received:", { name, email, photo })
-
     if (!email) {
       return res.status(400).json({
         success: false,
@@ -26,7 +23,7 @@ export const googleAuth = catchAsyncErrors(async (req, res, next) => {
     const user = await userModel.findOne({ email })
 
     if (user) {
-      console.log("Existing user found:", user._id)
+
 
       if (photo && user.avatar !== photo) {
         user.avatar = photo
@@ -50,8 +47,6 @@ export const googleAuth = catchAsyncErrors(async (req, res, next) => {
         message: "Login successful",
       })
     } else {
-      console.log("Creating new user for:", email)
-
       const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)
 
       const newUser = new userModel({
@@ -63,7 +58,6 @@ export const googleAuth = catchAsyncErrors(async (req, res, next) => {
       })
 
       await newUser.save()
-      console.log("New user created with ID:", newUser._id)
 
       const token = newUser.getJwtToken()
 
@@ -96,8 +90,6 @@ export const createUser = async (req, res, next) => {
   try {
     const { name, email, password, avatar } = req.body
 
-    console.log("Create user request:", { name, email, hasAvatar: !!avatar })
-
     const userEmail = await userModel.findOne({ email })
     if (userEmail) {
       return next(new ErrorHandler("User already exists", 400))
@@ -107,7 +99,6 @@ export const createUser = async (req, res, next) => {
 
     if (avatar && isCloudinaryConfigured()) {
       try {
-        console.log("Uploading avatar to Cloudinary...")
         const result = await cloudinary.uploader.upload(avatar, {
           folder: "avatars",
           width: 300,
@@ -115,10 +106,8 @@ export const createUser = async (req, res, next) => {
           crop: "fill",
         })
         avatarUrl = result.secure_url
-        console.log("Avatar uploaded successfully:", avatarUrl)
       } catch (uploadError) {
         console.error("Cloudinary upload error:", uploadError)
-        console.log("Using default avatar due to upload failure")
         // Don't fail registration, just use default avatar
       }
     } else if (avatar && !isCloudinaryConfigured()) {
@@ -248,8 +237,6 @@ export const updateUserInfo = catchAsyncErrors(async (req, res, next) => {
     const { name, phoneNumber } = req.body
     const userId = req.user.id
 
-    console.log("Update user info request:", { userId, name, phoneNumber })
-
     const user = await userModel.findById(userId)
 
     if (!user) {
@@ -277,7 +264,6 @@ export const updateUserInfo = catchAsyncErrors(async (req, res, next) => {
 // Update avatar with Cloudinary - FIXED
 export const updateUserAvatar = catchAsyncErrors(async (req, res, next) => {
   try {
-    console.log("=== Avatar Update Request Started ===")
     console.log("Cloudinary configuration check:", {
       configured: isCloudinaryConfigured(),
       CLOUDINARY_CLOUD_NAME: !!process.env.CLOUDINARY_CLOUD_NAME,
@@ -310,8 +296,8 @@ export const updateUserAvatar = catchAsyncErrors(async (req, res, next) => {
       return next(new ErrorHandler("Please provide an image", 400))
     }
 
-    console.log("Current user avatar:", existUser.avatar)
-    console.log("New avatar data length:", avatar.length)
+    // console.log("Current user avatar:", existUser.avatar)
+    // console.log("New avatar data length:", avatar.length)
 
     // Validate base64 format
     if (!avatar.startsWith("data:image/")) {
@@ -333,7 +319,7 @@ export const updateUserAvatar = catchAsyncErrors(async (req, res, next) => {
         fetch_format: "auto",
       })
 
-      console.log("✅ Cloudinary upload successful:", result.secure_url)
+      // console.log("✅ Cloudinary upload successful:", result.secure_url)
     } catch (uploadError) {
       console.error("❌ Cloudinary upload error:", uploadError)
       console.error("Error details:", {
@@ -352,9 +338,9 @@ export const updateUserAvatar = catchAsyncErrors(async (req, res, next) => {
         const publicIdWithExtension = urlParts[urlParts.length - 1]
         const publicId = `avatars/${publicIdWithExtension.split(".")[0]}`
 
-        console.log("🗑️ Deleting old avatar with public_id:", publicId)
+        // console.log("🗑️ Deleting old avatar with public_id:", publicId)
         await cloudinary.uploader.destroy(publicId)
-        console.log("✅ Old avatar deleted successfully")
+        // console.log("✅ Old avatar deleted successfully")
       } catch (deleteError) {
         console.log("⚠️ Could not delete old avatar (continuing anyway):", deleteError.message)
         // Don't fail the request if old image deletion fails
@@ -490,3 +476,38 @@ export const sendContactForm = async (req, res) => {
     res.status(500).json({ success: false, message: error.message || "Failed to send email" })
   }
 }
+
+// Admin Functionality
+// Get all users (Admin)
+export const adminAllUsers = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const users = await userModel.find().sort({
+      createdAt: -1,
+    });
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+// Delete user (Admin)
+export const adminDeleteUser = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const user = await userModel.findById(req.params.id);
+    if (!user) {
+      return next(
+        new ErrorHandler(`User is not available with this ${req.params.id}!`, 400)
+      );
+    }
+    await userModel.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: "User Deleted Successfully!",
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});

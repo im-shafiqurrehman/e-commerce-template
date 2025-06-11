@@ -181,3 +181,19 @@ export const createReview = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler(error, 400))
   }
 })
+
+
+// Get all products (Admin)
+export const adminAllProducts = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const products = await productModel.find().sort({
+      createdAt: -1,
+    });
+    res.status(200).json({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});

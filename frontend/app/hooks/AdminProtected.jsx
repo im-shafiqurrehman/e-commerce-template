@@ -1,24 +1,38 @@
-// components/AdminProtected.jsx
-"use client";
+"use client"
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import Loader from "../../components/Loader"
 
 export const AdminProtected = ({ children }) => {
-  const { user } = useSelector((state) => state.user);
-  const router = useRouter();
+  const { user, loading } = useSelector((state) => state.user)
+  const router = useRouter()
+  const [isChecking, setIsChecking] = useState(true)
 
   useEffect(() => {
-    if (!user || user?.role !== "admin") {
-      router.push("/");
+    if (!loading) {
+      if (!user) {
+        router.push("/")
+      } else if (user.role !== "admin") {
+        router.push("/")
+      } else {
+        setIsChecking(false)
+      }
     }
-  }, [user, router]);
+  }, [user, loading, router])
 
-  if (user?.role === "admin") {
-    return children;
+  if (loading || isChecking) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader />
+      </div>
+    )
   }
 
-  // Return null or loading spinner while checking auth status
-  return null;
-};
+  if (user?.role === "admin") {
+    return children
+  }
+
+  return null
+}

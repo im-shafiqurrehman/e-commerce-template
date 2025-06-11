@@ -69,6 +69,7 @@ const productSlice = createSlice({
     clearErrors: (state) => {
       state.error = null;
     },
+    
     resetProductState: (state) => {
       state.success = false;
       state.error = null;

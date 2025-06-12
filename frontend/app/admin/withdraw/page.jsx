@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { AdminProtected } from "../../hooks/AdminProtected"
-import AllWithdraw from "../../../components/Admin/AllWithdraw"
+import AllWithdraw from "../../../components/Admin/AllWithdraw";
+import { AdminProtected } from "@/app/hooks/AdminProtected"
 
-export default function AdminWithdrawPage() {
+export default function AdminDashboardWithdrawPage() {
   return (
     <AdminProtected>
       <AllWithdraw />
     </AdminProtected>
-  )
+  );
 }

@@ -50,12 +50,12 @@ const AdminSidebar = () => {
       icon: MdEmojiEvents,
       path: "/admin/events",
     },
-    {
-      id: 7,
-      title: "Withdraw Requests",
-      icon: CiMoneyBill,
-      path: "/admin/withdraw",
-    },
+    // {
+    //   id: 7,
+    //   title: "Withdraw Requests",
+    //   icon: CiMoneyBill,
+    //   path: "/admin/withdraw",
+    // },
   ]
 
   return (

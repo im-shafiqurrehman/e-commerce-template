@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Lottie from "react-lottie"
-import animationData from "../public/assets/Assests/animations/107043-success.json"
+import animationData from "../public/assets/assets/animations/107043-success.json"
 import CheckOutSteps from "@/components/CheckOut/CheckOutSteps"
 import { getAllOrdersOfUser } from "@/redux/actions/order"
 

@@ -3,6 +3,11 @@ import orderModel from "../model/orderModel.js"
 import productModel from "../model/productModel.js"
 import shopModel from "../model/shopModel.js"
 import ErrorHandler from "../utils/ErrorHandler.js"
+import fs from "fs";
+import path from "path";
+import { promisify } from "util";
+
+const unlinkAsync = promisify(fs.unlink);
 
 // Minimal changes to existing createProduct function
 export const createProduct = catchAsyncErrors(async (req, res, next) => {
@@ -100,24 +105,69 @@ export const getAllShopProducts = catchAsyncErrors(async (req, res, next) => {
   }
 })
 
+
+
+
+
+
 export const deleteShopProduct = catchAsyncErrors(async (req, res, next) => {
   try {
-    const productId = req.params.id
+    const productId = req.params.id;
 
-    const product = await productModel.findByIdAndDelete(productId)
+    // console.log(`Attempting to delete product with ID: ${productId}`);
+
+    const product = await productModel.findById(productId);
 
     if (!product) {
-      return next(new ErrorHandler("Product not found", 400))
+      return next(new ErrorHandler("Product not found", 400));
     }
+
+    // Delete associated images from uploads folder
+    const uploadsDir = path.join(process.cwd(), "uploads");
+    console.log(`Uploads directory: ${uploadsDir}`);
+
+    if (fs.existsSync(uploadsDir)) {
+      if (product.images && product.images.length > 0) {
+        for (const image of product.images) {
+          const filePath = path.join(uploadsDir, image);
+          console.log(`Checking file: ${filePath}`);
+          if (fs.existsSync(filePath)) {
+            await unlinkAsync(filePath);
+            console.log(`Successfully deleted file: ${filePath}`);
+          } else {
+            console.log(`File not found: ${filePath}`);
+          }
+        }
+      } else {
+        console.log("No images to delete for this product");
+      }
+    } else {
+      console.log("Uploads directory does not exist");
+    }
+
+    // Delete the product from the database
+    const deletedProduct = await productModel.findByIdAndDelete(productId);
+    if (!deletedProduct) {
+      throw new Error("Failed to delete product from database");
+    }
+
+    // console.log(`Product ${productId} deleted from database`);
 
     res.status(200).json({
       success: true,
       message: "Product deleted successfully",
-    })
+    });
   } catch (error) {
-    return next(new ErrorHandler(error.message, 400))
+    console.error(`Error in deleteShopProduct: ${error.message}`, error.stack);
+    return next(new ErrorHandler(`Failed to delete product: ${error.message}`, 400));
   }
-})
+});
+
+
+
+
+
+
 
 export const getAllProducts = catchAsyncErrors(async (req, res, next) => {
   try {

@@ -1,43 +1,48 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { DataGrid } from "@mui/x-data-grid"
-import { Button } from "@mui/material"
-import { AiOutlineEye } from "react-icons/ai"
-import { MdRefresh } from "react-icons/md"
-import Link from "next/link"
-import { getAllOrdersOfAdmin } from "@/redux/actions/order"
-import Loader from "../../components/Loader"
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { DataGrid } from "@mui/x-data-grid";
+import { Button } from "@mui/material";
+import { AiOutlineEye } from "react-icons/ai";
+import { MdRefresh } from "react-icons/md";
+import Link from "next/link";
+import { getAllOrdersOfAdmin } from "@/redux/actions/order";
+import Loader from "../../components/Loader";
 
 const AdminDashboardOrders = () => {
-  const dispatch = useDispatch()
-  const { adminOrders = [], adminOrderLoading = false, error } = useSelector((state) => state.order || {})
-  const [lastRefresh, setLastRefresh] = useState(new Date())
+  const dispatch = useDispatch();
+  const { adminOrders = [], adminOrderLoading = false, error } = useSelector(
+    (state) => state.orders || {}
+  ); // Fixed to state.orders
+  const [lastRefresh, setLastRefresh] = useState(new Date());
 
   useEffect(() => {
-    fetchOrders()
-  }, [dispatch])
+    fetchOrders();
+  }, [dispatch]);
 
   const fetchOrders = async () => {
     try {
-      await dispatch(getAllOrdersOfAdmin())
-      setLastRefresh(new Date())
+      await dispatch(getAllOrdersOfAdmin());
+      setLastRefresh(new Date());
     } catch (error) {
-      console.error("Error fetching orders:", error)
+      console.error("Error fetching orders:", error);
     }
-  }
+  };
 
   const handleRefresh = () => {
-    fetchOrders()
-  }
+    console.log("🔄 Manual refresh triggered");
+    fetchOrders();
+  };
 
   const columns = [
     {
       field: "id",
       headerName: "Order ID",
       flex: 0.8,
-      renderCell: (params) => <span className="text-blue-600 font-medium">#{params.value.slice(-8)}</span>,
+      renderCell: (params) => (
+        <span className="text-blue-600 font-medium">#{params.value.slice(-8)}</span>
+      ),
     },
     {
       field: "customer",
@@ -66,10 +71,10 @@ const AdminDashboardOrders = () => {
             params.value === "Delivered"
               ? "bg-green-100 text-green-800"
               : params.value === "Processing"
-                ? "bg-yellow-100 text-yellow-800"
-                : params.value === "Shipped"
-                  ? "bg-blue-100 text-blue-800"
-                  : "bg-gray-100 text-gray-800"
+              ? "bg-yellow-100 text-yellow-800"
+              : params.value === "Shipped"
+              ? "bg-blue-100 text-blue-800"
+              : "bg-gray-100 text-gray-800"
           }`}
         >
           {params.value}
@@ -110,7 +115,7 @@ const AdminDashboardOrders = () => {
         </div>
       ),
     },
-  ]
+  ];
 
   const rows = adminOrders.map((order) => ({
     id: order._id,
@@ -123,15 +128,15 @@ const AdminDashboardOrders = () => {
     itemsQty: order.cart?.reduce((acc, item) => acc + (item.qty || 0), 0) || 0,
     total: `PKR ${order.totalPrice}`,
     createdAt: new Date(order.createdAt).toLocaleDateString(),
-  }))
+  }));
 
   // Calculate statistics
-  const totalOrders = adminOrders.length
-  const deliveredOrders = adminOrders.filter((order) => order.status === "Delivered").length
-  const processingOrders = adminOrders.filter((order) => order.status === "Processing").length
+  const totalOrders = adminOrders.length;
+  const deliveredOrders = adminOrders.filter((order) => order.status === "Delivered").length;
+  const processingOrders = adminOrders.filter((order) => order.status === "Processing").length;
   const totalRevenue = adminOrders
     .filter((order) => order.status === "Delivered")
-    .reduce((acc, order) => acc + order.totalPrice, 0)
+    .reduce((acc, order) => acc + order.totalPrice, 0);
 
   return (
     <div className="w-full p-6 bg-gray-50 min-h-screen">
@@ -228,7 +233,7 @@ const AdminDashboardOrders = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminDashboardOrders
+export default AdminDashboardOrders;

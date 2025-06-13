@@ -1,69 +1,57 @@
-"use client"
+"use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { AiOutlineMoneyCollect } from "react-icons/ai"
-import { MdBorderClear, MdRefresh } from "react-icons/md"
-import { FaStore } from "react-icons/fa"
-import Link from "next/link"
-import { DataGrid } from "@mui/x-data-grid"
-import { getAllOrdersOfAdmin } from "@/redux/actions/order"
-import { getAllSellers } from "@/redux/actions/seller"
-import Loader from "../../../components/Loader"
-
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AiOutlineMoneyCollect } from "react-icons/ai";
+import { MdBorderClear, MdRefresh } from "react-icons/md";
+import { FaStore } from "react-icons/fa";
+import Link from "next/link";
+import { DataGrid } from "@mui/x-data-grid";
+import { getAllOrdersOfAdmin } from "@/redux/actions/order";
+import { getAllSellers } from "@/redux/actions/seller";
+import Loader from "../../../components/Loader";
 
 const AdminDashboardMain = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  // FIXED: Now correctly accessing state.order (not state.orders)
-  const orderState = useSelector((state) => {
-    // console.log("🔍 Full Redux state:", state)
-    // console.log("🔍 Order state:", state.order)
-    return state.order || {}
-  })
+  // Use state.orders to match the reverted store with orders: orderReducer
+  const orderState = useSelector((state) => state.orders || {});
+  const sellerState = useSelector((state) => state.seller || {});
+  const userState = useSelector((state) => state.user || {});
 
-  const { adminOrders = [], adminOrderLoading = false, error, lastUpdated } = orderState
-  const sellerState = useSelector((state) => state.seller || {})
-  const userState = useSelector((state) => state.user || {})
+  const { adminOrders = [], adminOrderLoading = false, error, lastUpdated } = orderState;
+  const { sellers = [] } = sellerState;
+  const { user } = userState;
 
-  const { sellers = [] } = sellerState
-  const { user } = userState
+  const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const [lastRefresh, setLastRefresh] = useState(new Date())
-  const [isInitialized, setIsInitialized] = useState(false)
-
-  // FIXED: Memoized fetch function to prevent infinite loops
+  // Fetch data function
   const fetchData = useCallback(async () => {
     if (!user || user.role !== "admin") {
-      // console.log("⚠️ User not admin or not loaded yet")
-      return
+      console.log("⚠️ User not admin or not loaded yet");
+      return;
     }
 
     try {
-      console.log("🔄 Fetching admin data...")
-
-      // Fetch orders and wait for completion
-      const ordersResult = await dispatch(getAllOrdersOfAdmin())
-      // console.log("📦 Fetch completed, orders result:", ordersResult?.length || 0, "orders")
-
-      // Fetch sellers
-      await dispatch(getAllSellers())
-
-      setLastRefresh(new Date())
-      setIsInitialized(true)
+      console.log("🔄 Fetching admin data...");
+      await dispatch(getAllOrdersOfAdmin());
+      await dispatch(getAllSellers());
+      setLastRefresh(new Date());
+      setIsInitialized(true);
     } catch (error) {
-      console.error("Error fetching admin data:", error)
+      console.error("Error fetching admin data:", error);
     }
-  }, [dispatch, user])
+  }, [dispatch, user]);
 
-  // FIXED: Effect with proper dependencies
+  // Effect to trigger data fetch
   useEffect(() => {
     if (user && user.role === "admin" && !isInitialized) {
-      fetchData()
+      fetchData();
     }
-  }, [user, fetchData, isInitialized])
+  }, [user, fetchData, isInitialized]);
 
-  // FIXED: Debug effect to track state changes
+  // Debug state changes
   useEffect(() => {
     console.log("📊 AdminOrders state changed:", {
       length: adminOrders?.length || 0,
@@ -71,20 +59,20 @@ const AdminDashboardMain = () => {
       error,
       lastUpdated,
       orders: adminOrders,
-    })
-  }, [adminOrders, adminOrderLoading, error, lastUpdated])
+    });
+  }, [adminOrders, adminOrderLoading, error, lastUpdated]);
 
   const handleRefresh = () => {
-    console.log("🔄 Manual refresh triggered")
-    fetchData()
-  }
+    console.log("🔄 Manual refresh triggered");
+    fetchData();
+  };
 
-  // FIXED: Memoized calculations with better error handling
+  // Memoized statistics
   const statistics = useMemo(() => {
-    // console.log("🧮 Calculating statistics with adminOrders:", adminOrders?.length || 0)
+    console.log("🧮 Calculating statistics with adminOrders:", adminOrders?.length || 0);
 
     if (!Array.isArray(adminOrders)) {
-      // console.warn("⚠️ adminOrders is not an array:", adminOrders)
+      console.warn("⚠️ adminOrders is not an array:", adminOrders);
       return {
         totalOrders: 0,
         totalSellers: sellers?.length || 0,
@@ -93,22 +81,21 @@ const AdminDashboardMain = () => {
         otherStatusCount: 0,
         adminBalance: "0.00",
         totalRevenue: "0.00",
-      }
+      };
     }
 
-    const totalOrders = adminOrders.length
-    const totalSellers = sellers?.length || 0
-    const deliveredOrders = adminOrders.filter((order) => order?.status === "Delivered")
-    const processingOrders = adminOrders.filter((order) => order?.status === "Processing")
+    const totalOrders = adminOrders.length;
+    const totalSellers = sellers?.length || 0;
+    const deliveredOrders = adminOrders.filter((order) => order?.status === "Delivered");
+    const processingOrders = adminOrders.filter((order) => order?.status === "Processing");
     const otherStatusOrders = adminOrders.filter(
       (order) => order?.status && order.status !== "Delivered" && order.status !== "Processing",
-    )
+    );
 
-    // Calculate admin earnings (10% commission on delivered orders)
-    const adminEarning = deliveredOrders.reduce((acc, item) => acc + (item?.totalPrice || 0) * 0.1, 0)
-    const totalRevenue = deliveredOrders.reduce((acc, item) => acc + (item?.totalPrice || 0), 0)
+    const adminEarning = deliveredOrders.reduce((acc, item) => acc + (item?.totalPrice || 0) * 0.1, 0);
+    const totalRevenue = deliveredOrders.reduce((acc, item) => acc + (item?.totalPrice || 0), 0);
 
-    const result = {
+    return {
       totalOrders,
       totalSellers,
       deliveredCount: deliveredOrders.length,
@@ -116,17 +103,14 @@ const AdminDashboardMain = () => {
       otherStatusCount: otherStatusOrders.length,
       adminBalance: adminEarning.toFixed(2),
       totalRevenue: totalRevenue.toFixed(2),
-    }
+    };
+  }, [adminOrders, sellers]);
 
-    // console.log("📈 Calculated statistics:", result)
-    return result
-  }, [adminOrders, sellers])
-
-  // FIXED: Memoized table data with better error handling
+  // Memoized table data
   const tableData = useMemo(() => {
     if (!Array.isArray(adminOrders) || adminOrders.length === 0) {
-      // console.log("📋 No table data - adminOrders:", adminOrders?.length || 0)
-      return []
+      console.log("📋 No table data - adminOrders:", adminOrders?.length || 0);
+      return [];
     }
 
     const data = adminOrders.map((item) => ({
@@ -136,18 +120,20 @@ const AdminDashboardMain = () => {
       status: item?.status || "Unknown",
       createdAt: item?.createdAt ? new Date(item.createdAt).toLocaleDateString() : "N/A",
       shopName: item?.cart?.[0]?.shop?.name || "Unknown Shop",
-    }))
+    }));
 
-    console.log("📋 Generated table data:", data.length, "rows")
-    return data
-  }, [adminOrders])
+    console.log("📋 Generated table data:", data.length, "rows");
+    return data;
+  }, [adminOrders]);
 
   const columns = [
     {
       field: "id",
       headerName: "Order ID",
       flex: 0.7,
-      renderCell: (params) => <span className="text-blue-600 font-medium">#{params.value?.slice(-8) || "N/A"}</span>,
+      renderCell: (params) => (
+        <span className="text-blue-600 font-medium">#{params.value?.slice(-8) || "N/A"}</span>
+      ),
     },
     {
       field: "status",
@@ -159,8 +145,8 @@ const AdminDashboardMain = () => {
             params.value === "Delivered"
               ? "bg-green-100 text-green-800"
               : params.value === "Processing"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-gray-100 text-gray-800"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-gray-100 text-gray-800"
           }`}
         >
           {params.value}
@@ -181,15 +167,14 @@ const AdminDashboardMain = () => {
       flex: 0.8,
       renderCell: (params) => <span className="text-gray-700">{params.value}</span>,
     },
-  ]
+  ];
 
-  // Show loading while fetching or if not initialized
   if (adminOrderLoading || !isInitialized) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-900">
         <Loader />
       </div>
-    )
+    );
   }
 
   return (
@@ -213,14 +198,12 @@ const AdminDashboardMain = () => {
           </button>
         </div>
 
-        {/* Debug Info */}
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
             <strong>Error:</strong> {error}
           </div>
         )}
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center">
@@ -260,7 +243,6 @@ const AdminDashboardMain = () => {
           </div>
         </div>
 
-        {/* Order Status Summary */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status Overview</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -280,7 +262,6 @@ const AdminDashboardMain = () => {
           </div>
         </div>
 
-        {/* Orders Table */}
         <div className="bg-white rounded-lg shadow-md">
           <div className="p-6 border-b border-gray-200 flex justify-between items-center">
             <div>
@@ -306,7 +287,7 @@ const AdminDashboardMain = () => {
                     paginationModel: { pageSize: 10 },
                   },
                 }}
-                pageSizeOptions={[5, 10, 25]}
+                pageSizeOptions={[5, 10, 25]} 
                 disableRowSelectionOnClick
                 autoHeight
                 sx={{
@@ -341,7 +322,7 @@ const AdminDashboardMain = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminDashboardMain
+export default AdminDashboardMain;

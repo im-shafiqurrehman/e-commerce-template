@@ -1,79 +1,79 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
-import { AiOutlineArrowLeft } from "react-icons/ai"
-import { MdRefresh } from "react-icons/md"
-import Link from "next/link"
-import { AdminProtected } from "../../../hooks/AdminProtected"
-import Loader from "../../../../components/Loader"
-import { server } from "../../../../lib/server"
-import axios from "axios"
-import { toast } from "react-toastify"
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { AiOutlineArrowLeft } from "react-icons/ai";
+import { MdRefresh } from "react-icons/md";
+import Link from "next/link";
+import { AdminProtected } from "../../../hooks/AdminProtected";
+import Loader from "../../../../components/Loader";
+import { server } from "../../../../lib/server";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const AdminOrderDetail = () => {
-  const params = useParams()
-  const orderId = params.id
+  const params = useParams();
+  const orderId = params.id;
 
-  const [order, setOrder] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [updating, setUpdating] = useState(false)
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     if (orderId) {
-      console.log("🔍 Frontend: Fetching order with ID:", orderId)
-      fetchOrderDetails()
+      console.log("🔍 Frontend: Fetching order with ID:", orderId);
+      fetchOrderDetails();
     }
-  }, [orderId])
+  }, [orderId]);
 
   const fetchOrderDetails = async () => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
-      const url = `${server}/order/admin/order/${orderId}`
-      console.log("📡 Frontend: Making request to:", url)
+      const url = `${server}/order/admin/order/${orderId}`;
+      console.log("📡 Frontend: Making request to:", url);
 
       const { data } = await axios.get(url, {
         withCredentials: true,
-      })
+      });
 
-      console.log("✅ Frontend: Response received:", data)
+      console.log("✅ Frontend: Response received:", data);
 
       if (data.success) {
-        setOrder(data.order)
+        setOrder(data.order);
       } else {
-        setError("Order not found")
+        setError("Order not found");
       }
     } catch (error) {
-      console.error("❌ Frontend: Error fetching order details:", error)
-      console.error("❌ Frontend: Error response:", error.response?.data)
-      setError(error.response?.data?.message || "Failed to fetch order details")
+      console.error("❌ Frontend: Error fetching order details:", error);
+      console.error("❌ Frontend: Error response:", error.response?.data);
+      setError(error.response?.data?.message || "Failed to fetch order details");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const updateOrderStatus = async (newStatus) => {
     try {
-      setUpdating(true)
+      setUpdating(true);
       const { data } = await axios.put(
         `${server}/order/admin/order/${orderId}`,
         { status: newStatus },
         { withCredentials: true },
-      )
+      );
 
       if (data.success) {
-        setOrder({ ...order, status: newStatus })
-        toast.success(`Order status updated to ${newStatus}`)
+        setOrder((prevOrder) => ({ ...prevOrder, status: newStatus }));
+        toast.success(`Order status updated to ${newStatus}`);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update order status")
+      toast.error(error.response?.data?.message || "Failed to update order status");
     } finally {
-      setUpdating(false)
+      setUpdating(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -82,7 +82,7 @@ const AdminOrderDetail = () => {
           <Loader />
         </div>
       </AdminProtected>
-    )
+    );
   }
 
   if (error) {
@@ -111,7 +111,7 @@ const AdminOrderDetail = () => {
           </div>
         </div>
       </AdminProtected>
-    )
+    );
   }
 
   return (
@@ -150,10 +150,10 @@ const AdminOrderDetail = () => {
                   order?.status === "Delivered"
                     ? "bg-green-100 text-green-800"
                     : order?.status === "Processing"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : order?.status === "Shipped"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-gray-100 text-gray-800"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : order?.status === "Shipped"
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-gray-100 text-gray-800"
                 }`}
               >
                 {order?.status}
@@ -206,7 +206,7 @@ const AdminOrderDetail = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Amount</p>
-                <p className="font-medium">PKR {order?.totalPrice}</p>
+                <p className="font-medium">PKR {order?.totalPrice || 0}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Items Count</p>
@@ -241,7 +241,7 @@ const AdminOrderDetail = () => {
         </div>
       </div>
     </AdminProtected>
-  )
-}
+  );
+};
 
-export default AdminOrderDetail
+export default AdminOrderDetail;

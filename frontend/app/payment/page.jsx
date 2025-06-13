@@ -1,7 +1,7 @@
 "use client";
 
 import PaymentPage from "@/pages/PaymentPage";
-import ProtectedRoute from "@/pages/ProtectedRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function Payment() {
   return (

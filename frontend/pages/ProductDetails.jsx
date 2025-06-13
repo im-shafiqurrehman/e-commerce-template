@@ -9,32 +9,33 @@ import ProductDetail from "@/components/ProductDetail"
 import SuggestedProducts from "@/components/SuggestedProducts"
 import Loader from "@/components/Loader"
 
-function ProductDetails({ id }) {
-  const { allProducts, isLoading } = useSelector((state) => state.products) || {}
-  const { allEvents } = useSelector((state) => state.events) || {}
-  const [product, setProduct] = useState(null)
-  const searchParams = useSearchParams()
-  const eventData = searchParams.get("isEvent")
+export default function ProductDetails({ params }) {
+  const { id } = params; // Get id from dynamic route
+  const { allProducts, isLoading } = useSelector((state) => state.products) || {};
+  const { allEvents } = useSelector((state) => state.events) || {};
+  const [product, setProduct] = useState(null);
+  const searchParams = useSearchParams();
+  const eventData = searchParams.get("isEvent");
 
   useEffect(() => {
-    if (!id) return // Guard against invalid id
+    if (!id) return;
 
     if (eventData !== null) {
-      const foundProduct = allEvents?.find((product) => product._id === id)
-      setProduct(foundProduct || null)
+      const foundProduct = allEvents?.find((product) => product._id === id);
+      setProduct(foundProduct || null);
     } else {
-      const foundProduct = allProducts?.find((product) => product._id === id)
-      setProduct(foundProduct || null)
+      const foundProduct = allProducts?.find((product) => product._id === id);
+      setProduct(foundProduct || null);
     }
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }, [id, allProducts, allEvents, eventData])
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [id, allProducts, allEvents, eventData]);
 
   if (isLoading) {
     return (
       <div className="p-6 text-center">
         <Loader />
       </div>
-    )
+    );
   }
 
   return (
@@ -51,7 +52,5 @@ function ProductDetails({ id }) {
       <NewsLetter />
       <Footer />
     </div>
-  )
+  );
 }
-
-export default ProductDetails

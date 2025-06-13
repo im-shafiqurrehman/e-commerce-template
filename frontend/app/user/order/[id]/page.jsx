@@ -1,5 +1,5 @@
 import OrderDetailPage from "@/pages/OrderDetailPage";
-import ProtectedRoute from "@/pages/ProtectedRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function OrderDetailPageWrapper({ params }) {
   return (

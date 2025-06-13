@@ -1,5 +1,5 @@
 
-import ProtectedRoute from "@/pages/ProtectedRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import ShopCreate from "../../pages/ShopPages/ShopCreate";
 
 export default function Payment() {

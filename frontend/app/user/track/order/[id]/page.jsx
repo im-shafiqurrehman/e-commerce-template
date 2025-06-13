@@ -1,5 +1,5 @@
 import TrackOrderPage from "@/pages/TrackOrderPage";
-import ProtectedRoute from "@/pages/ProtectedRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function TrackOrder() {
   return (

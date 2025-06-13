@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
-import { useSearchParams } from "next/navigation"; // Replaced react-router-dom's useSearchParams with next/navigation's useSearchParams
+import { useSearchParams } from "next/navigation"; 
 import ProductCard from "@/components/ProductCard";
 import Footer from "@/components/Footer";
 import NewsLetter from "@/components/NewsLetter";
@@ -8,10 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "@/components/Loader";
 import { getAllProducts } from "@/redux/actions/product";
 
-function ProductsPage() {
+export default function ProductsPage() {
   const dispatch = useDispatch();
   const { allProducts, isLoading } = useSelector((state) => state.products);
-  const searchParams = useSearchParams(); // Replaced useSearchParams from react-router-dom
+  const searchParams = useSearchParams();
   const categoryData = searchParams.get("category");
   const [data, setData] = useState([]);
 
@@ -21,13 +21,12 @@ function ProductsPage() {
 
   useEffect(() => {
     if (categoryData === null) {
-      setData(allProducts);
+      setData(allProducts || []);
     } else {
-      const filteredData =
-        allProducts && allProducts.filter((i) => i.category === categoryData);
+      const filteredData = allProducts?.filter((i) => i.category === categoryData) || [];
       setData(filteredData);
     }
-    window.scrollTo({ top: 0, behavior: "smooth" }); // Updated to use smooth scrolling for better UX
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [allProducts, categoryData]);
 
   return (
@@ -57,5 +56,3 @@ function ProductsPage() {
     </>
   );
 }
-
-export default ProductsPage;

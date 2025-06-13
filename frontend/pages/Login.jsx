@@ -13,127 +13,118 @@ import { loadUserSuccess } from "../redux/reducers/user"
 import { signInWithPopup } from "firebase/auth"
 import { auth, googleProvider } from "../lib/firebase"
 
-function Login() {
-  const dispatch = useDispatch()
-  const { isAuthenticated } = useSelector((state) => state.user)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [passwordVisible, setPasswordVisible] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [googleLoading, setGoogleLoading] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
-  const router = useRouter()
+export default function Login() {
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.user);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    // Check for existing user data
-    const userData = localStorage.getItem("userData")
-
+    const userData = localStorage.getItem("userData");
     if (userData) {
       try {
-        const parsedUserData = JSON.parse(userData)
-        dispatch(loadUserSuccess(parsedUserData))
+        const parsedUserData = JSON.parse(userData);
+        dispatch(loadUserSuccess(parsedUserData));
       } catch (error) {
-        localStorage.removeItem("userData")
+        localStorage.removeItem("userData");
       }
     }
 
-    const savedEmail = localStorage.getItem("rememberedEmail")
-    const savedPassword = localStorage.getItem("rememberedPassword")
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    const savedPassword = localStorage.getItem("rememberedPassword");
     if (savedEmail && savedPassword) {
-      setEmail(savedEmail)
-      setPassword(savedPassword)
-      setRememberMe(true)
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
     }
-  }, [dispatch])
+  }, [dispatch]);
 
   if (isAuthenticated) {
-    router.push("/")
-    return null
+    router.push("/");
+    return null;
   }
 
-  // Google Sign-In Function - FIXED
   const handleGoogleClick = async () => {
     try {
-      setGoogleLoading(true)
-
-      // 1. Sign in with Firebase
-      const result = await signInWithPopup(auth, googleProvider)
-
-      // 2. Get user data
+      setGoogleLoading(true);
+      const result = await signInWithPopup(auth, googleProvider);
       const userData = {
         name: result.user.displayName,
         email: result.user.email,
         photo: result.user.photoURL,
-      }
-
-      console.log("Firebase auth successful:", userData.email)
-
-      // 3. Send to backend
-      const res = await axios.post(`${server}/user/google`, userData, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-
-      // 4. Handle response
+      };
+      console.log("Firebase auth successful:", userData.email);
+      const res = await axios.post(
+        `${server}/user/google`,
+        userData,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       if (res.data.success) {
-        // Store user data
-        localStorage.setItem("userData", JSON.stringify(res.data.user))
-        dispatch(loadUserSuccess(res.data.user))
-        toast.success("Successfully signed in with Google!")
-        router.push("/")
+        localStorage.setItem("userData", JSON.stringify(res.data.user));
+        dispatch(loadUserSuccess(res.data.user));
+        toast.success("Successfully signed in with Google!");
+        router.push("/");
       } else {
-        toast.error(res.data.message || "Authentication failed")
+        toast.error(res.data.message || "Authentication failed");
       }
     } catch (error) {
-      console.error("Could not sign in with Google", error)
-
+      console.error("Could not sign in with Google", error);
       if (error.code === "auth/popup-closed-by-user") {
-        toast.info("Sign-in cancelled")
+        toast.info("Sign-in cancelled");
       } else if (error.response) {
-        toast.error(error.response.data?.message || "Server error")
+        toast.error(error.response.data?.message || "Server error");
       } else {
-        toast.error("Google sign-in failed")
+        toast.error("Google sign-in failed");
       }
     } finally {
-      setGoogleLoading(false)
+      setGoogleLoading(false);
     }
-  }
+  };
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible)
-  }
+    setPasswordVisible(!passwordVisible);
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-
+    e.preventDefault();
+    setLoading(true);
     try {
-      const res = await axios.post(`${server}/user/login`, { email, password, rememberMe }, { withCredentials: true })
+      const res = await axios.post(
+        `${server}/user/login`,
+        { email, password, rememberMe },
+        { withCredentials: true }
+      );
       if (res.data.success) {
-        dispatch(loadUserSuccess(res.data.user))
+        dispatch(loadUserSuccess(res.data.user));
         if (rememberMe) {
-          localStorage.setItem("rememberedEmail", email)
-          localStorage.setItem("rememberedPassword", password)
+          localStorage.setItem("rememberedEmail", email);
+          localStorage.setItem("rememberedPassword", password);
         } else {
-          localStorage.removeItem("rememberedEmail")
-          localStorage.removeItem("rememberedPassword")
+          localStorage.removeItem("rememberedEmail");
+          localStorage.removeItem("rememberedPassword");
         }
-        toast.success("User successfully logged in")
-        router.push("/")
+        toast.success("User successfully logged in");
+        router.push("/");
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
-        toast.error(error.response.data.message)
+        toast.error(error.response.data.message);
       } else {
-        toast.error("An error occurred. Please try again.")
+        toast.error("An error occurred. Please try again.");
       }
-      console.log(error)
+      console.log(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div>
@@ -149,7 +140,6 @@ function Login() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Sign in to your account
               </h1>
-
               <button
                 onClick={handleGoogleClick}
                 type="button"
@@ -172,7 +162,11 @@ function Login() {
                         stroke="currentColor"
                         strokeWidth="4"
                       ></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                      ></path>
                     </svg>
                     Signing in...
                   </>
@@ -183,13 +177,11 @@ function Login() {
                   </>
                 )}
               </button>
-
               <div className="flex items-center">
                 <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
                 <div className="px-3 text-gray-500 text-sm dark:text-gray-400">or</div>
                 <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
               </div>
-
               <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                 <div>
                   <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
@@ -287,7 +279,7 @@ function Login() {
                   )}
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  Don't have an account yet?{" "}
+                  Don&apos;t have an account yet?{" "}
                   <Link href="/register" className="font-medium text-blue-600 hover:underline dark:text-blue-500">
                     Sign up
                   </Link>
@@ -298,7 +290,5 @@ function Login() {
         </div>
       </section>
     </div>
-  )
+  );
 }
-
-export default Login

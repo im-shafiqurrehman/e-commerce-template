@@ -7,7 +7,7 @@ import sendToken from "../utils/jwtToken.js";
 import fs from "fs";
 import path from "path";
 // Add with other imports
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Named import
 
 // Add this new controller
 export const googleAuth = catchAsyncErrors(async (req, res, next) => {

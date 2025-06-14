@@ -1,4 +1,6 @@
 "use client";
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState } from "react";
    import Header from "@/components/Header";
    import { useSearchParams } from "next/navigation";
@@ -13,7 +15,7 @@ import { useEffect, useState } from "react";
      const dispatch = useDispatch();
      const { allProducts, isLoading } = useSelector((state) => state.products);
      const searchParams = useSearchParams();
-     const categoryData = searchParams.get("category");
+     const categoryData = typeof window !== "undefined" ? searchParams.get("category") : null;
      const [data, setData] = useState([]);
 
      useEffect(() => {

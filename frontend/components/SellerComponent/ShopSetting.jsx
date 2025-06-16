@@ -76,12 +76,12 @@ function ShopSetting() {
                   ? URL.createObjectURL(avatar)
                   : seller?.avatar
                   ? `${backend_url}/${seller.avatar}`
-                  : "/default-avatar.png" // Fallback image
+                  : "/fallback-avatar.png" // Fallback image
               }
               alt="Shop Avatar"
               className="h-32 w-32 rounded-full border-2 border-gray-300 object-cover"
               onError={(e) => {
-                e.target.src = "/default-avatar.png"; // Fallback on error
+                e.target.src = "/fallback-avatar.png"; // Fallback on error
               }}
             />
             <div className="absolute bottom-0 right-0 cursor-pointer rounded-full bg-gray-800 p-1 text-white">

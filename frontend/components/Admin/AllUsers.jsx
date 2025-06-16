@@ -66,7 +66,7 @@ const AllUsers = () => {
       renderCell: (params) => (
         <div className="flex items-center justify-center">
           <img
-            src={params.value || "/default-avatar.png"}
+            src={params.value || "/fallback-avatar.png"}
             alt="User Avatar"
             className="w-8 h-8 rounded-full object-cover"
           />

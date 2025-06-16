@@ -1,7 +1,7 @@
 "use client"
 
 import { use } from "react"
-import ProductDetails from "@/pages/ProductDetails"
+import ProductDetails from "@/components/ProductDetails"
 
 export default function ProductDetailsPage({ params }) {
   // Use React.use to unwrap the params Promise

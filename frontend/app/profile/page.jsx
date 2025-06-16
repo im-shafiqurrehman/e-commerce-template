@@ -1,5 +1,5 @@
 "use client";
-import ProfilePage from "@/pages/ProfilePage";
+import ProfilePage from "@/components/ProfilePage";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function Profile() {

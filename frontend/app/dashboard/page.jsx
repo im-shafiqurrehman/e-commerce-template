@@ -1,5 +1,5 @@
-import ShopDashBoard from "@/pages/ShopDashBoard/ShopDashBoard";
-import SellerProtectedRoute from "@/pages/ShopPages/SellerProtectedRoute";
+import ShopDashBoard from "@/components/ShopDashBoard/ShopDashBoard";
+import SellerProtectedRoute from "@/components/ShopPages/SellerProtectedRoute";
 
 export default function Dashboard() {
   return (

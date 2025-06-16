@@ -1,5 +1,5 @@
-import DashWithDrawMoney from "@/pages/ShopDashBoard/DashWithDrawMoney";
-import SellerProtectedRoute from "@/pages/ShopPages/SellerProtectedRoute";
+import DashWithDrawMoney from "@/components/ShopDashBoard/DashWithDrawMoney";
+import SellerProtectedRoute from "@/components/ShopPages/SellerProtectedRoute";
 
 export default function DashboardWithdrawMoney() {
   return (

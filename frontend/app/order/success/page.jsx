@@ -1,6 +1,6 @@
 "use client";
 
-import OrderSuccessPage from "@/pages/OrderSuccessPage";
+import OrderSuccessPage from "../../../components/OrderSuccessPage";
 
 export default function OrderSuccessPageWrapper() {
   return <OrderSuccessPage />;

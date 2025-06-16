@@ -1,6 +1,6 @@
-import DashAllRefundOrders from "../../components/SellerComponent/ShopDashBoard/DashAllRefundOrders";
-import DashBoardHeader from "../../components/SellerComponent/ShopDashBoard/DashBoardHeader";
-import DashSidebar from "../../components/SellerComponent/ShopDashBoard/DashSidebar";
+import DashAllRefundOrders from "../SellerComponent/ShopDashBoard/DashAllRefundOrders";
+import DashBoardHeader from "../SellerComponent/ShopDashBoard/DashBoardHeader";
+import DashSidebar from "../SellerComponent/ShopDashBoard/DashSidebar";
 
 const DashAllRefunds = () => {
   return (

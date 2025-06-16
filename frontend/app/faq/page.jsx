@@ -1,4 +1,4 @@
-import FAQs from "@/pages/FAQs";
+import FAQs from "@/components/FAQs";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 

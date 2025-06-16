@@ -1,5 +1,5 @@
-import ShopCoupounsCode from "../../pages/ShopDashBoard/ShopCouponsCode";
-import SellerProtectedRoute from "@/pages/ShopPages/SellerProtectedRoute";
+import ShopCoupounsCode from "../../components/ShopDashBoard/ShopCouponsCode";
+import SellerProtectedRoute from "@/components/ShopPages/SellerProtectedRoute";
 
 export default function DashboardCoupouns() {
   return (

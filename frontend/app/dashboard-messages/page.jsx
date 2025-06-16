@@ -1,5 +1,5 @@
-import ShopInboxPage from "@/pages/ShopDashBoard/ShopInboxPage";
-import SellerProtectedRoute from "@/pages/ShopPages/SellerProtectedRoute";
+import ShopInboxPage from "@/components/ShopDashBoard/ShopInboxPage";
+import SellerProtectedRoute from "@/components/ShopPages/SellerProtectedRoute";
 
 export default function DashboardMessages() {
   return (

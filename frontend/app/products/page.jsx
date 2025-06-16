@@ -1,6 +1,6 @@
 "use client";
 
-import ProductsPage from "@/pages/ProductsPage";
+import ProductsPage from "@/components/ProductsPage";
 
 export default function ProductsPageWrapper() {
   return <ProductsPage />;

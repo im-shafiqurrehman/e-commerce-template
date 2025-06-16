@@ -1,5 +1,5 @@
-import ShopHomePage from "@/pages/ShopPages/ShopHomePage";
-import SellerProtectedRoute from "@/pages/ShopPages/SellerProtectedRoute";
+import ShopHomePage from "@/components/ShopPages/ShopHomePage";
+import SellerProtectedRoute from "@/components/ShopPages/SellerProtectedRoute";
 
 export default function ShopHome() {
   return (

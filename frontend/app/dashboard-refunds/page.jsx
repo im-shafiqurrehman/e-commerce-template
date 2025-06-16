@@ -1,6 +1,6 @@
 
-import DashAllRefunds from "@/pages/ShopDashBoard/DashAllRefunds";
-import SellerProtectedRoute from "@/pages/ShopPages/SellerProtectedRoute";
+import DashAllRefunds from "@/components/ShopDashBoard/DashAllRefunds";
+import SellerProtectedRoute from "@/components/ShopPages/SellerProtectedRoute";
 
 export default function DashboardRefunds() {
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import PaymentPage from "@/pages/PaymentPage";
+import PaymentPage from "@/components/PaymentPage";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function Payment() {

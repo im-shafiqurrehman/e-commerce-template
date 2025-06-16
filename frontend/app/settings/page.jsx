@@ -1,5 +1,5 @@
-import ShopSettingPage from "@/pages/ShopPages/ShopSettingPage";
-import SellerProtectedRoute from "@/pages/ShopPages/SellerProtectedRoute";
+import ShopSettingPage from "@/components/ShopPages/ShopSettingPage";
+import SellerProtectedRoute from "@/components/ShopPages/SellerProtectedRoute";
 
 export default function Settings() {
   return (

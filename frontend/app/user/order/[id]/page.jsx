@@ -1,4 +1,4 @@
-import OrderDetailPage from "@/pages/OrderDetailPage";
+import OrderDetailPage from "@/components/OrderDetailPage";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function OrderDetailPageWrapper({ params }) {

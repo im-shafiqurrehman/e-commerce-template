@@ -1,5 +1,5 @@
-import ShopOrderDetails from "@/pages/ShopPages/ShopOrderDetails";
-import SellerProtectedRoute from "@/pages/ShopPages/SellerProtectedRoute";
+import ShopOrderDetails from ".../../../components/ShopPages/ShopOrderDetails";
+import SellerProtectedRoute from "../../../components/ShopPages/SellerProtectedRoute";
 
 export default function OrderDetails() {
   return (

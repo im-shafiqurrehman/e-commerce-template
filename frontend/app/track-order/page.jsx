@@ -1,4 +1,4 @@
-import TrackOrderPage from "@/pages/TrackOrderPage";
+import TrackOrderPage from "@/components/TrackOrderPage";
 
 export default function TrackOrderPageWrapper() {
   return <TrackOrderPage />;

@@ -1,5 +1,5 @@
-import ShopCreateEvent from "@/pages/ShopDashBoard/ShopCreateEvent";
-import SellerProtectedRoute from "@/pages/ShopPages/SellerProtectedRoute";
+import ShopCreateEvent from "@/components/ShopDashBoard/ShopCreateEvent";
+import SellerProtectedRoute from "@/components/ShopPages/SellerProtectedRoute";
 
 export default function DashboardCreateEvent() {
   return (
